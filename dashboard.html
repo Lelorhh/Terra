@@ -85,7 +85,6 @@
       cursor: pointer;
     }
 
-    /* Sidebar icons (using simple inline SVG icons) */
     nav a svg {
       width: 20px;
       height: 20px;
@@ -117,7 +116,6 @@
       z-index: 90;
     }
 
-    /* Logo on header */
     .logo {
       font-weight: 700;
       font-size: 1.4rem;
@@ -126,7 +124,6 @@
       letter-spacing: 2px;
     }
 
-    /* Search bar */
     .search-container {
       flex: 1;
       margin: 0 2rem;
@@ -148,7 +145,6 @@
       box-shadow: 0 0 8px var(--green-primary);
     }
 
-    /* User menu */
     .user-menu {
       display: flex;
       align-items: center;
@@ -187,7 +183,6 @@
       background-color: var(--green-dark);
     }
 
-    /* Main content area */
     main {
       padding: 2rem;
       flex-grow: 1;
@@ -195,12 +190,11 @@
       min-height: calc(100vh - 72px);
     }
 
-    /* Title and controls */
     .bookings-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
       flex-wrap: wrap;
       gap: 1rem;
     }
@@ -209,9 +203,34 @@
       font-size: 1.75rem;
       font-weight: 700;
       color: var(--green-dark);
+      user-select: none;
     }
 
-    /* Grid/List toggle */
+    /* Category Tabs */
+    .category-tabs {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      user-select: none;
+    }
+
+    .category-tabs button {
+      background: none;
+      border: 2px solid var(--green-primary);
+      padding: 0.4rem 1rem;
+      border-radius: var(--border-radius);
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--green-primary);
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .category-tabs button.active,
+    .category-tabs button:hover {
+      background-color: var(--green-primary);
+      color: var(--white);
+    }
+
     .view-toggle {
       display: flex;
       gap: 0.75rem;
@@ -235,7 +254,6 @@
       color: var(--white);
     }
 
-    /* Bookings filter input */
     .filter-input {
       flex-grow: 1;
       max-width: 300px;
@@ -252,7 +270,6 @@
       box-shadow: 0 0 8px var(--green-primary);
     }
 
-    /* Bookings grid/list container */
     .bookings-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -260,7 +277,6 @@
       transition: all 0.3s ease;
     }
 
-    /* Booking cards */
     .booking-card {
       background-color: var(--white);
       border-radius: var(--border-radius);
@@ -305,7 +321,7 @@
       color: var(--gray-medium);
     }
 
-    /* List view overrides */
+    /* List view */
     .list-view .bookings-grid {
       display: flex;
       flex-direction: column;
@@ -403,19 +419,26 @@
 
     <main>
       <div class="bookings-header">
-        <div class="bookings-title">Your Eco Adventures</div>
+        <div>
+          <div class="bookings-title">Your Eco Adventures</div>
+          <div class="category-tabs" role="tablist" aria-label="Booking categories">
+            <button role="tab" aria-selected="true" aria-controls="hotelsPanel" id="hotelsTab" class="active" data-category="hotels">Hotels</button>
+            <button role="tab" aria-selected="false" aria-controls="restaurantsPanel" id="restaurantsTab" data-category="restaurants">Restaurants</button>
+            <button role="tab" aria-selected="false" aria-controls="ecoPanel" id="ecoTab" data-category="eco">Eco Adventures</button>
+          </div>
+        </div>
+
         <div class="view-toggle" role="group" aria-label="Toggle view">
           <button id="gridViewBtn" aria-pressed="true" class="active" title="Grid View">🔲</button>
           <button id="listViewBtn" aria-pressed="false" title="List View">📋</button>
         </div>
       </div>
 
-      <section class="bookings-grid" id="bookingsContainer" role="list"></section>
+      <section class="bookings-grid" id="bookingsContainer" role="list" aria-live="polite" aria-relevant="additions removals"></section>
     </main>
   </div>
 
   <script>
-    const welcomeMsg = document.getElementById('welcomeMsg');
     const bookingsContainer = document.getElementById('bookingsContainer');
     const logoutBtn = document.getElementById('logoutBtn');
     const searchInput = document.getElementById('searchInput');
@@ -424,10 +447,15 @@
     const mainWrapper = document.querySelector('.main-wrapper');
     const userAvatar = document.getElementById('userAvatar');
 
-    // Mock bookings data
+    const categoryTabs = document.querySelectorAll('.category-tabs button');
+    let currentCategory = 'hotels';
+
+    // Extended mock bookings with categories
     const mockBookings = [
+      // Hotels (4)
       {
         id: '1',
+        category: 'hotels',
         title: 'Forest Eco Lodge',
         location: 'Mossel Bay, Western Cape',
         dates: '2025-08-01 to 2025-08-07',
@@ -435,7 +463,37 @@
         img: 'https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&w=600&q=80'
       },
       {
+        id: '5',
+        category: 'hotels',
+        title: 'Mountain Green Hotel',
+        location: 'Drakensberg, KwaZulu-Natal',
+        dates: '2025-08-15 to 2025-08-20',
+        description: 'Eco-friendly hotel with breathtaking mountain views.',
+        img: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80'
+      },
+      {
+        id: '6',
+        category: 'hotels',
+        title: 'Ocean Breeze Inn',
+        location: 'Durban, KwaZulu-Natal',
+        dates: '2025-09-05 to 2025-09-10',
+        description: 'Beachfront hotel with sustainable practices.',
+        img: 'https://images.unsplash.com/photo-1501117716987-c8e91eac3a56?auto=format&fit=crop&w=600&q=80'
+      },
+      {
+        id: '7',
+        category: 'hotels',
+        title: 'Savanna Sunset Resort',
+        location: 'Kruger National Park, Mpumalanga',
+        dates: '2025-09-20 to 2025-09-25',
+        description: 'Luxury eco resort blending into the natural environment.',
+        img: 'https://images.unsplash.com/photo-1508610048659-6f1e0ed468d2?auto=format&fit=crop&w=600&q=80'
+      },
+
+      // Restaurants (4)
+      {
         id: '2',
+        category: 'restaurants',
         title: 'Vegan Food Tour',
         location: 'Cape Town, Western Cape',
         dates: '2025-08-10 (Evening)',
@@ -443,7 +501,37 @@
         img: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80'
       },
       {
+        id: '8',
+        category: 'restaurants',
+        title: 'Green Garden Cafe',
+        location: 'Johannesburg, Gauteng',
+        dates: '2025-08-18 (Lunch)',
+        description: 'Organic and locally sourced menu in a charming garden setting.',
+        img: 'https://images.unsplash.com/photo-1466637574441-749b8f19452f?auto=format&fit=crop&w=600&q=80'
+      },
+      {
+        id: '9',
+        category: 'restaurants',
+        title: 'Zero Waste Bistro',
+        location: 'Pretoria, Gauteng',
+        dates: '2025-09-02 (Dinner)',
+        description: 'Innovative zero waste restaurant with seasonal dishes.',
+        img: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=600&q=80'
+      },
+      {
+        id: '10',
+        category: 'restaurants',
+        title: 'Herb & Spice Eatery',
+        location: 'Port Elizabeth, Eastern Cape',
+        dates: '2025-09-15 (Brunch)',
+        description: 'A fusion of local flavors using sustainable ingredients.',
+        img: 'https://images.unsplash.com/photo-1525610553991-2bede1a236e2?auto=format&fit=crop&w=600&q=80'
+      },
+
+      // Eco Adventures (4)
+      {
         id: '3',
+        category: 'eco',
         title: 'Kruger Eco Safari',
         location: 'Kruger National Park, Mpumalanga',
         dates: '2025-09-12 to 2025-09-18',
@@ -452,35 +540,53 @@
       },
       {
         id: '4',
+        category: 'eco',
         title: 'Wild Coast Hiking Trail',
         location: 'Eastern Cape',
         dates: '2025-10-01 to 2025-10-05',
         description: 'Experience sustainable hiking along the pristine Wild Coast.',
         img: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=600&q=80'
+      },
+      {
+        id: '11',
+        category: 'eco',
+        title: 'Garden Route Canoeing',
+        location: 'Knysna, Western Cape',
+        dates: '2025-10-10 to 2025-10-12',
+        description: 'Explore the Garden Route by eco-friendly canoe tours.',
+        img: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80'
+      },
+      {
+        id: '12',
+        category: 'eco',
+        title: 'Cape Town Coastal Cleanup',
+        location: 'Cape Town, Western Cape',
+        dates: '2025-11-05',
+        description: 'Join a community cleanup event to protect marine life.',
+        img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80'
       }
     ];
 
-    // Get logged-in user data from sessionStorage
+    // Get logged-in user or redirect to login
     const loggedInUser = JSON.parse(sessionStorage.getItem('terraLoggedInUser'));
     if (!loggedInUser) {
       window.location.href = 'login.html';
     } else {
-      // Set user avatar initial
       userAvatar.textContent = loggedInUser.name.charAt(0).toUpperCase();
+      userAvatar.title = `Logged in as ${loggedInUser.name}`;
     }
 
-    // Render bookings (filtered)
-    function renderBookings(filter = '') {
-      const filtered = mockBookings.filter(b =>
-        b.title.toLowerCase().includes(filter.toLowerCase()) ||
-        b.location.toLowerCase().includes(filter.toLowerCase()) ||
-        b.description.toLowerCase().includes(filter.toLowerCase())
-      );
-
+    function renderBookings(searchTerm = '') {
       bookingsContainer.innerHTML = '';
+      const filtered = mockBookings.filter(b => {
+        return b.category === currentCategory &&
+          (b.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+           b.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+           b.description.toLowerCase().includes(searchTerm.toLowerCase()));
+      });
 
-      if (filtered.length === 0) {
-        bookingsContainer.innerHTML = `<p style="color: var(--gray-medium); font-style: italic;">No bookings found.</p>`;
+      if(filtered.length === 0) {
+        bookingsContainer.innerHTML = `<p>No ${currentCategory} bookings found.</p>`;
         return;
       }
 
@@ -501,9 +607,10 @@
       });
     }
 
+    // Initial render
     renderBookings();
 
-    // Search filter event
+    // Search input event
     searchInput.addEventListener('input', (e) => {
       renderBookings(e.target.value);
     });
@@ -525,7 +632,22 @@
       gridViewBtn.setAttribute('aria-pressed', 'false');
     });
 
-    // Logout button
+    // Category tab click event
+    categoryTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        if (tab.classList.contains('active')) return;
+        categoryTabs.forEach(t => {
+          t.classList.remove('active');
+          t.setAttribute('aria-selected', 'false');
+        });
+        tab.classList.add('active');
+        tab.setAttribute('aria-selected', 'true');
+        currentCategory = tab.dataset.category;
+        renderBookings(searchInput.value.trim());
+      });
+    });
+
+    // Logout
     logoutBtn.addEventListener('click', () => {
       if (confirm("Are you sure you want to logout?")) {
         sessionStorage.removeItem('terraLoggedInUser');
@@ -535,9 +657,3 @@
   </script>
 </body>
 </html>
-
-      
-
-
-
-     
