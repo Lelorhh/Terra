@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TerraBook - Register</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --green-primary: #27ae60;
+      --green-dark: #1b5e20;
+      --gray-light: #f7f9fa;
+      --gray-medium: #666666;
+      --gray-dark: #333333;
+      --white: #ffffff;
+      --border-radius: 12px;
+      --shadow-light: rgba(39, 174, 96, 0.15);
+      --font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--gray-light);
+      color: var(--gray-dark);
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      padding: 1rem;
+    }
+
+    .register-container {
+      background-color: var(--white);
+      border-radius: var(--border-radius);
+      box-shadow: 0 8px 20px var(--shadow-light);
+      padding: 2rem;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+    }
+
+    h1 {
+      color: var(--green-dark);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    label {
+      text-align: left;
+      font-weight: 600;
+      color: var(--green-dark);
+    }
+
+    input[type='text'],
+    input[type='email'],
+    input[type='password'] {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 2px solid var(--green-primary);
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      outline-offset: 2px;
+      transition: border-color 0.3s ease;
+    }
+
+    input:focus {
+      border-color: var(--green-dark);
+    }
+
+    .password-toggle {
+      position: relative;
+    }
+
+    .password-toggle span {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: var(--green-primary);
+      font-size: 0.9rem;
+    }
+
+    .strength {
+      font-size: 0.8rem;
+      color: var(--gray-medium);
+      text-align: left;
+      margin-top: -0.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    button {
+      background-color: var(--green-primary);
+      color: var(--white);
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 8px var(--shadow-light);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      margin-top: 1rem;
+    }
+
+    button:hover {
+      background-color: var(--green-dark);
+      box-shadow: 0 6px 14px var(--shadow-light);
+    }
+
+    .login-link {
+      margin-top: 1.5rem;
+      font-size: 0.9rem;
+      color: var(--green-primary);
+    }
+
+    .login-link a {
+      color: var(--green-dark);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+
+    .register-image {
+      margin-top: 2rem;
+      border-radius: var(--border-radius);
+      box-shadow: 0 6px 20px var(--shadow-light);
+      max-width: 100%;
+      height: auto;
+      object-fit: cover;
+    }
+
+    .message {
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+
+    .message.success {
+      color: green;
+    }
+
+    .message.error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <main class="register-container" role="main" aria-label="Registration form">
+    <h1>Create Account</h1>
+    <form id="registerForm" novalidate>
+      <label for="name">Full Name</label>
+      <input type="text" id="name" name="name" placeholder="Your full name" required autocomplete="name" />
+
+      <label for="email">Email Address</label>
+      <input type="email" id="email" name="email" placeholder="you@example.com" required autocomplete="email" />
+
+      <label for="password">Password</label>
+      <div class="password-toggle">
+        <input type="password" id="password" name="password" placeholder="Choose a password" required autocomplete="new-password" />
+        <span onclick="togglePassword('password')">Show</span>
+      </div>
+      <div class="strength" id="strengthMsg"></div>
+
+      <label for="confirmPassword">Confirm Password</label>
+      <div class="password-toggle">
+        <input type="password" id="confirmPassword" placeholder="Repeat password" required />
+        <span onclick="togglePassword('confirmPassword')">Show</span>
+      </div>
+
+      <div id="messageBox" class="message"></div>
+      <button type="submit">Register</button>
+    </form>
+
+    <p class="login-link">
+      Already have an account? <a href="login.html">Login here</a>
+    </p>
+    <img
+      class="register-image"
+      src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"
+      alt="Eco-friendly kayaking in South African wilderness"
+      width="800"
+      height="450"
+      loading="lazy"
+    />
+  </main>
+
+  <script>
+    const form = document.getElementById('registerForm');
+    const messageBox = document.getElementById('messageBox');
+    const strengthMsg = document.getElementById('strengthMsg');
+
+    form.password.addEventListener('input', () => {
+      const val = form.password.value;
+      let strength = 'Weak';
+      if (val.length > 7 && /[A-Z]/.test(val) && /[0-9]/.test(val) && /[!@#$%^&*]/.test(val)) {
+        strength = 'Strong';
+      } else if (val.length > 5) {
+        strength = 'Moderate';
+      }
+      strengthMsg.textContent = `Password Strength: ${strength}`;
+    });
+
+    function togglePassword(id) {
+      const input = document.getElementById(id);
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
+    async function hashPassword(password) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(password);
+      const hash = await crypto.subtle.digest('SHA-256', data);
+      return [...new Uint8Array(hash)].map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const name = form.name.value.trim();
+      const email = form.email.value.trim().toLowerCase();
+      const password = form.password.value;
+      const confirmPassword = form.confirmPassword.value;
+
+      messageBox.className = 'message';
+
+      if (!name || !email || !password || !confirmPassword) {
+        messageBox.textContent = 'Please fill in all fields.';
+        messageBox.classList.add('error');
+        return;
+      }
+
+      if (!/\S+@\S+\.\S+/.test(email)) {
+        messageBox.textContent = 'Invalid email address.';
+        messageBox.classList.add('error');
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        messageBox.textContent = 'Passwords do not match.';
+        messageBox.classList.add('error');
+        return;
+      }
+
+      let users = JSON.parse(localStorage.getItem('terraUsers') || '[]');
+
+      if (users.some(u => u.email === email)) {
+        messageBox.textContent = 'This email is already registered.';
+        messageBox.classList.add('error');
+        return;
+      }
+
+      const hashedPassword = await hashPassword(password);
+      const newUser = { name, email, password: hashedPassword };
+      users.push(newUser);
+
+      localStorage.setItem('terraUsers', JSON.stringify(users));
+      sessionStorage.setItem('terraLoggedInUser', JSON.stringify(newUser));
+
+      messageBox.textContent = 'Registration successful! Redirecting...';
+      messageBox.classList.add('success');
+      form.reset();
+
+      setTimeout(() => {
+        window.location.href = 'dashboard.html';
+      }, 1500);
+    });
+  </script>
+</body>
+</html>
