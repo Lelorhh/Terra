@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TerraBook - Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --green-primary: #27ae60;
+      --green-dark: #1b5e20;
+      --gray-light: #f7f9fa;
+      --gray-medium: #666666;
+      --gray-dark: #333333;
+      --white: #ffffff;
+      --border-radius: 12px;
+      --shadow-light: rgba(39, 174, 96, 0.15);
+      --font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--gray-light);
+      color: var(--gray-dark);
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background-color: var(--green-primary);
+      color: var(--white);
+      padding: 1.5rem 2rem;
+      font-weight: 700;
+      font-size: 1.5rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 12px var(--shadow-light);
+      border-radius: 0 0 var(--border-radius) var(--border-radius);
+    }
+
+    header button {
+      background-color: var(--green-dark);
+      border: none;
+      color: var(--white);
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 0.5rem 1rem;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    header button:hover {
+      background-color: #145214;
+    }
+
+    main.container {
+      flex-grow: 1;
+      max-width: 960px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    h1 {
+      color: var(--green-dark);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-size: 2rem;
+    }
+
+    .bookings-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .booking-card {
+      background-color: var(--white);
+      border-radius: var(--border-radius);
+      box-shadow: 0 8px 20px var(--shadow-light);
+      padding: 1rem;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .booking-card:hover {
+      transform: translateY(-8px);
+    }
+
+    .booking-img {
+      border-radius: var(--border-radius);
+      height: 180px;
+      object-fit: cover;
+      margin-bottom: 1rem;
+      width: 100%;
+    }
+
+    .booking-title {
+      color: var(--green-dark);
+      font-weight: 700;
+      font-size: 1.25rem;
+      margin: 0 0 0.5rem 0;
+    }
+
+    .booking-details {
+      font-size: 0.95rem;
+      color: var(--gray-medium);
+      margin: 0 0 0.5rem 0;
+      flex-grow: 1;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>TerraBook Dashboard</div>
+    <button id="logoutBtn" aria-label="Logout">Logout</button>
+  </header>
+
+  <main class="container" role="main">
+    <h1 id="welcomeMsg">Welcome back!</h1>
+    <section class="bookings-grid" id="bookingsContainer" aria-live="polite" aria-label="Your eco bookings"></section>
+  </main>
+
+  <script>
+    const welcomeMsg = document.getElementById('welcomeMsg');
+    const bookingsContainer = document.getElementById('bookingsContainer');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    const mockBookings = [
+      {
+        id: '1',
+        title: 'Forest Eco Lodge',
+        location: 'Mossel Bay, Western Cape',
+        dates: '2025-08-01 to 2025-08-07',
+        description: 'Stay in a solar-powered lodge supporting local conservation.',
+        img: 'https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&w=600&q=80'
+      },
+      {
+        id: '2',
+        title: 'Vegan Food Tour',
+        location: 'Cape Town, Western Cape',
+        dates: '2025-08-10 (Evening)',
+        description: 'Explore the best vegan restaurants with zero waste practices.',
+        img: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80'
+      },
+      {
+        id: '3',
+        title: 'Kruger Eco Safari',
+        location: 'Kruger National Park, Mpumalanga',
+        dates: '2025-09-12 to 2025-09-18',
+        description: 'Guided eco-safari supporting wildlife conservation and local communities.',
+        img: 'https://images.unsplash.com/photo-1549887531-92aa4b75d15b?auto=format&fit=crop&w=600&q=80'
+      },
+      {
+        id: '4',
+        title: 'Wild Coast Hiking Trail',
+        location: 'Eastern Cape',
+        dates: '2025-10-01 to 2025-10-05',
+        description: 'Experience sustainable hiking along the pristine Wild Coast, with minimal environmental impact.',
+        img: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=600&q=80'
+      }
+    ];
+
+    const loggedInUser = JSON.parse(sessionStorage.getItem('terraLoggedInUser'));
+    if (!loggedInUser) {
+      window.location.href = 'login.html';
+    } else {
+      welcomeMsg.textContent = `Welcome back, ${loggedInUser.name}!`;
+    }
+
+    function renderBookings() {
+      bookingsContainer.innerHTML = '';
+      mockBookings.forEach(booking => {
+        const card = document.createElement('article');
+        card.className = 'booking-card';
+        card.setAttribute('tabindex', '0');
+        card.innerHTML = `
+          <img src="${booking.img}" alt="${booking.title} photo" class="booking-img" />
+          <h2 class="booking-title">${booking.title}</h2>
+          <p class="booking-details"><strong>Location:</strong> ${booking.location}</p>
+          <p class="booking-details"><strong>Dates:</strong> ${booking.dates}</p>
+          <p class="booking-details">${booking.description}</p>
+        `;
+        bookingsContainer.appendChild(card);
+      });
+    }
+
+    renderBookings();
+
+    logoutBtn.addEventListener('click', () => {
+      sessionStorage.removeItem('terraLoggedInUser');
+      window.location.href = 'login.html';
+    });
+  </script>
+</body>
+</html>
