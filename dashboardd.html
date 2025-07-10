@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -7,148 +7,322 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
+    /* Reset and base */
     * {
       box-sizing: border-box;
       font-family: 'Poppins', sans-serif;
     }
     body {
       margin: 0;
+      background: #f9f9f7;
+      color: #2e3a25;
       display: flex;
-      height: 100vh;
-      background: #f4fdf7;
       flex-direction: column;
+      min-height: 100vh;
     }
-    .banner-container {
-      position: relative;
-      width: 100%;
-      height: 250px;
-      overflow: hidden;
-      animation: fadeIn 2s ease forwards;
-      flex-shrink: 0;
+    a {
+      text-decoration: none;
+      color: #2e7d32;
+      transition: color 0.3s ease;
     }
-    .banner-image {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: 0;
-      animation: fadeIn 2s ease forwards;
+    a:hover {
+      color: #4caf50;
     }
-    .banner-overlay {
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background-color: rgba(0, 0, 0, 0.4); /* translucent black */
+
+    /* Header */
+    header {
+      background: white;
+      box-shadow: 0 2px 6px rgb(46 125 50 / 0.15);
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: space-between;
+      padding: 0 30px;
+      height: 60px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
-    .banner-overlay h1 {
+    .logo {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: #2e7d32;
+      letter-spacing: 1.2px;
+    }
+    nav a {
+      margin-left: 25px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Hero Banner */
+    .hero-banner {
+      position: relative;
+      height: 300px;
+      background-image: url('https://i.ytimg.com/vi/Ajy53jAs5RU/maxresdefault.jpg');
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       color: white;
+      text-align: center;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(46, 125, 50, 0.55);
+      z-index: 1;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 700px;
+      padding: 0 20px;
+    }
+    .hero-content h1 {
       font-size: 3rem;
       font-weight: 700;
-      text-shadow: 0 0 10px rgba(0,0,0,0.7);
-      margin: 0;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 0 10px rgba(0,0,0,0.5);
     }
-    @keyframes fadeIn {
-      to {
-        opacity: 1;
-      }
+    .hero-content p {
+      font-size: 1.25rem;
+      margin-bottom: 1.5rem;
+      text-shadow: 0 0 6px rgba(0,0,0,0.4);
+    }
+    .hero-content button {
+      background-color: #81c784;
+      border: none;
+      color: white;
+      padding: 12px 30px;
+      font-size: 1.1rem;
+      border-radius: 30px;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 4px 10px rgba(129, 199, 132, 0.5);
+      transition: background-color 0.3s ease;
+    }
+    .hero-content button:hover {
+      background-color: #4caf50;
     }
 
-    /* Layout below banner */
-    .container {
+    /* Main content */
+    main {
+      flex-grow: 1;
       display: flex;
-      flex: 1 1 auto;
-      overflow: hidden;
-      height: calc(100vh - 250px);
+      max-width: 1200px;
+      margin: 40px auto 60px;
+      padding: 0 20px;
+      gap: 30px;
     }
 
+    /* Sidebar */
     .sidebar {
       width: 220px;
-      background-color: #2e7d32;
-      color: white;
-      padding: 20px;
-      overflow-y: auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgb(0 0 0 / 0.08);
+      padding: 25px 20px;
+      display: flex;
+      flex-direction: column;
     }
     .sidebar h2 {
-      font-size: 24px;
-      margin-bottom: 30px;
+      margin: 0 0 25px;
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: #2e7d32;
+      letter-spacing: 1px;
     }
     .sidebar a {
-      display: block;
+      font-weight: 600;
+      color: #2e3a25;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+      transition: color 0.3s ease;
+    }
+    .sidebar a:hover {
+      color: #4caf50;
+    }
+
+    /* Dashboard content */
+    .dashboard-content {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    /* Filters */
+    .filters {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgb(0 0 0 / 0.08);
+      padding: 20px 25px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    .filters h3 {
+      flex: 1 1 100%;
+      font-weight: 700;
+      margin: 0 0 15px 0;
+      color: #2e7d32;
+    }
+    select {
+      padding: 8px 12px;
+      font-size: 1rem;
+      border: 1.5px solid #c8e6c9;
+      border-radius: 8px;
+      color: #2e3a25;
+      background: #f7fcf8;
+      cursor: pointer;
+      transition: border-color 0.3s ease;
+    }
+    select:hover, select:focus {
+      border-color: #4caf50;
+      outline: none;
+    }
+    button {
+      background-color: #4caf50;
       color: white;
-      text-decoration: none;
-      margin-bottom: 15px;
+      border: none;
+      padding: 10px 28px;
+      font-weight: 700;
+      font-size: 1rem;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
     }
-    .main {
-      flex: 1;
-      padding: 20px;
-      overflow-y: auto;
-      background: #f4fdf7;
+    button:hover {
+      background-color: #388e3c;
     }
+
+    /* KPI Cards */
     .kpis {
       display: flex;
-      flex-wrap: wrap;
       gap: 20px;
-      margin-bottom: 30px;
+      flex-wrap: wrap;
     }
     .kpi {
-      flex: 1 1 200px;
       background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      flex: 1 1 180px;
+      border-radius: 14px;
+      padding: 25px 30px;
+      box-shadow: 0 2px 10px rgb(0 0 0 / 0.1);
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #2e3a25;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    .chart-container, .table-container, .reviews, .impact, .filters {
+    .kpi span {
+      color: #4caf50;
+      font-size: 1.4rem;
+    }
+
+    /* Charts and table containers */
+    .chart-container, .table-container, .impact {
       background: white;
-      padding: 20px;
-      border-radius: 12px;
+      border-radius: 14px;
+      box-shadow: 0 2px 10px rgb(0 0 0 / 0.1);
+      padding: 25px 30px;
+    }
+    h3 {
+      color: #2e7d32;
+      font-weight: 700;
       margin-bottom: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      font-size: 1.4rem;
     }
     .chart-container canvas {
       max-width: 100%;
       height: 250px !important;
     }
+
+    /* Table */
     table {
       width: 100%;
-      border-collapse: collapse;
+      border-collapse: separate;
+      border-spacing: 0 12px;
     }
     th, td {
-      padding: 10px;
-      border-bottom: 1px solid #ddd;
+      padding: 12px 15px;
       text-align: left;
+      font-weight: 600;
+      font-size: 1rem;
+      color: #2e3a25;
+    }
+    th {
+      border-bottom: 2px solid #4caf50;
+    }
+    tbody tr {
+      background: #f4f9f4;
+      border-radius: 8px;
+      transition: background-color 0.3s ease;
+    }
+    tbody tr:hover {
+      background: #dcedc8;
+    }
+
+    /* Impact */
+    .impact p {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin: 8px 0;
     }
     .progress-bar {
-      background: #e0f2f1;
-      border-radius: 8px;
+      background: #c8e6c9;
+      border-radius: 12px;
       overflow: hidden;
+      margin: 10px 0 5px;
+      height: 16px;
+      width: 100%;
     }
     .progress {
       background: #4caf50;
-      height: 10px;
+      height: 100%;
+      transition: width 0.5s ease;
     }
-    select {
-      padding: 8px;
-      font-size: 16px;
-      margin-right: 10px;
+    small {
+      color: #4caf50;
+      font-weight: 600;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      main {
+        flex-direction: column;
+        margin: 20px auto 40px;
+      }
+      .sidebar {
+        width: 100%;
+        margin-bottom: 20px;
+        flex-direction: row;
+        overflow-x: auto;
+      }
+      .sidebar a {
+        flex: 0 0 auto;
+        margin-right: 20px;
+        border-bottom: none;
+        padding: 10px 0;
+      }
+      .dashboard-content {
+        width: 100%;
+      }
+      .kpis {
+        justify-content: space-around;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="banner-container">
-    <img
-      src="https://i.ytimg.com/vi/Ajy53jAs5RU/maxresdefault.jpg"
-      alt="TerraBook Banner"
-      class="banner-image"
-    />
-    <div class="banner-overlay">
-      <h1>TerraBook</h1>
-    </div>
-  </div>
-
-  <div class="container">
-    <div class="sidebar">
-      <h2>TerraBook</h2>
+  <header>
+    <div class="logo">TerraBook</div>
+    <nav>
       <a href="#">Dashboard</a>
       <a href="#">Bookings</a>
       <a href="#">Listings</a>
@@ -157,18 +331,41 @@
       <a href="#">Impact</a>
       <a href="#">Reports</a>
       <a href="#">Settings</a>
-    </div>
+    </nav>
+  </header>
 
-    <div class="main">
-      <div class="filters">
+  <section class="hero-banner" role="banner" aria-label="TerraBook hero banner">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1>Discover Sustainable Stays</h1>
+      <p>Explore eco-friendly listings and support local communities with TerraBook</p>
+      <button onclick="alert('Explore now!')">Explore Now</button>
+    </div>
+  </section>
+
+  <main>
+    <aside class="sidebar" aria-label="Sidebar navigation">
+      <h2>Dashboard</h2>
+      <a href="#">Overview</a>
+      <a href="#">Bookings</a>
+      <a href="#">Listings</a>
+      <a href="#">Customers</a>
+      <a href="#">Revenue</a>
+      <a href="#">Impact</a>
+      <a href="#">Reports</a>
+      <a href="#">Settings</a>
+    </aside>
+
+    <section class="dashboard-content" aria-live="polite">
+      <div class="filters" role="region" aria-label="Filter options">
         <h3>Filter by Category and Month</h3>
-        <select id="categoryFilter">
-          <option value="all">All</option>
+        <select id="categoryFilter" aria-label="Category filter">
+          <option value="all">All Categories</option>
           <option value="Hotels">Hotels</option>
           <option value="Eco Adventures">Eco Adventures</option>
           <option value="Restaurants">Restaurants</option>
         </select>
-        <select id="monthFilter">
+        <select id="monthFilter" aria-label="Month filter">
           <option value="all">All Months</option>
           <option value="Feb">February</option>
           <option value="Mar">March</option>
@@ -180,27 +377,29 @@
         <button onclick="applyFilters()">Apply Filters</button>
       </div>
 
-      <div class="kpis">
-        <div class="kpi"><strong>Total Bookings:</strong> <span id="totalBookings">207</span></div>
-        <div class="kpi"><strong>Active Listings:</strong> 36</div>
-        <div class="kpi"><strong>Monthly Revenue:</strong> <span id="monthlyRevenue">R56,000</span></div>
-        <div class="kpi"><strong>Carbon Offset:</strong> 3,200kg</div>
+      <div class="kpis" role="region" aria-label="Key performance indicators">
+        <div class="kpi"><span id="totalBookings">207</span> Total Bookings</div>
+        <div class="kpi"><span>36</span> Active Listings</div>
+        <div class="kpi"><span id="monthlyRevenue">R56,000</span> Monthly Revenue</div>
+        <div class="kpi"><span>3,200kg</span> Carbon Offset</div>
       </div>
 
-      <div class="chart-container">
+      <div class="chart-container" role="region" aria-label="Booking trends chart">
         <h3>Booking Trends</h3>
         <canvas id="bookingsChart"></canvas>
       </div>
 
-      <div class="chart-container">
+      <div class="chart-container" role="region" aria-label="Revenue breakdown chart">
         <h3>Revenue Breakdown</h3>
         <canvas id="revenueChart"></canvas>
       </div>
 
-      <div class="table-container">
+      <div class="table-container" role="region" aria-label="Top performing listings table">
         <h3>Top Performing Listings</h3>
         <table>
-          <tr><th>Name</th><th>Location</th><th>Bookings</th><th>Revenue</th><th>Rating</th></tr>
+          <thead>
+            <tr><th>Name</th><th>Location</th><th>Bookings</th><th>Revenue</th><th>Rating</th></tr>
+          </thead>
           <tbody id="listingsTable">
             <tr><td>GreenHaven Lodge</td><td>Mpumalanga</td><td>85</td><td>R42,000</td><td>⭐ 4.8</td></tr>
             <tr><td>Forest Edge Eco</td><td>Knysna</td><td>63</td><td>R31,500</td><td>⭐ 4.6</td></tr>
@@ -209,33 +408,49 @@
         </table>
       </div>
 
-      <div class="impact">
+      <div class="impact" role="region" aria-label="Environmental impact summary">
         <h3>Environmental Impact</h3>
         <p>🌱 Carbon Saved: 3,200 kg</p>
         <p>🌳 Trees Planted: 150</p>
         <p>👩‍🌾 Local Jobs Created: 28</p>
-        <div class="progress-bar">
+        <div class="progress-bar" aria-label="Progress to tree planting goal">
           <div class="progress" style="width: 75%"></div>
         </div>
         <small>75% to 200-tree goal</small>
       </div>
-    </div>
-  </div>
+    </section>
+  </main>
 
   <script>
     const chartLabels = ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'];
+
     async function fetchData() {
       try {
-        const response = await fetch('https://example.com/api/dashboard-data'); // Replace with your actual endpoint
+        // Replace with your actual endpoint returning JSON like:
+        // { bookingsData: {...}, revenueData: {...}, chartLabels: [...] }
+        const response = await fetch('https://example.com/api/dashboard-data');
         const data = await response.json();
 
         window.bookingsData = data.bookingsData;
         window.revenueData = data.revenueData;
-        window.chartLabels = data.chartLabels;
+        window.chartLabels = data.chartLabels || chartLabels;
 
         createCharts();
       } catch (error) {
         console.error('Failed to load live data:', error);
+        // Fallback sample data if fetch fails
+        window.bookingsData = {
+          Hotels: [35, 45, 50, 60, 70, 75],
+          'Eco Adventures': [15, 18, 20, 25, 28, 30],
+          Restaurants: [20, 22, 24, 27, 30, 32]
+        };
+        window.revenueData = {
+          Hotels: 42000,
+          'Eco Adventures': 15000,
+          Restaurants: 23000
+        };
+        window.chartLabels = chartLabels;
+        createCharts();
       }
     }
 
@@ -247,29 +462,49 @@
         bookingsChart = new Chart(bookingsCtx, {
           type: 'line',
           data: {
-            labels: chartLabels,
-            datasets: Object.keys(bookingsData).map((category, i) => ({
+            labels: window.chartLabels,
+            datasets: Object.keys(window.bookingsData).map((category, i) => ({
               label: category,
-              data: bookingsData[category],
-              borderColor: ['#4caf50', '#81c784', '#c8e6c9'][i],
-              fill: false
+              data: window.bookingsData[category],
+              borderColor: ['#4caf50', '#81c784', '#a5d6a7'][i],
+              backgroundColor: 'transparent',
+              fill: false,
+              tension: 0.3,
+              pointRadius: 4,
+              pointHoverRadius: 6,
             }))
           },
           options: {
             responsive: true,
-            maintainAspectRatio: false
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'top', labels: { font: { size: 14 } } },
+              tooltip: { mode: 'index', intersect: false }
+            },
+            scales: {
+              y: { beginAtZero: true, ticks: { stepSize: 10 } }
+            }
           }
         });
 
         const revenueCtx = document.getElementById('revenueChart').getContext('2d');
         revenueChart = new Chart(revenueCtx, {
-          type: 'pie',
+          type: 'doughnut',
           data: {
-            labels: Object.keys(revenueData),
+            labels: Object.keys(window.revenueData),
             datasets: [{
-              data: Object.values(revenueData),
-              backgroundColor: ['#388e3c', '#66bb6a', '#a5d6a7']
+              data: Object.values(window.revenueData),
+              backgroundColor: ['#4caf50', '#81c784', '#a5d6a7'],
+              hoverOffset: 20,
             }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '70%',
+            plugins: {
+              legend: { position: 'bottom', labels: { font: { size: 14 } } }
+            }
           }
         });
       } catch (err) {
@@ -281,28 +516,32 @@
       const category = document.getElementById('categoryFilter').value;
       const month = document.getElementById('monthFilter').value;
 
-      const monthIndex = chartLabels.indexOf(month);
+      const monthIndex = window.chartLabels.indexOf(month);
       if (month !== 'all' && monthIndex === -1) return;
 
       let filteredBookings = {};
       let filteredRevenue = {};
 
       if (category === 'all') {
-        Object.keys(bookingsData).forEach(key => {
-          filteredBookings[key] = month === 'all' ? bookingsData[key] : [bookingsData[key][monthIndex]];
-          filteredRevenue[key] = revenueData[key];
+        Object.keys(window.bookingsData).forEach(key => {
+          filteredBookings[key] = month === 'all' ? window.bookingsData[key] : [window.bookingsData[key][monthIndex]];
+          filteredRevenue[key] = window.revenueData[key];
         });
       } else {
-        filteredBookings[category] = month === 'all' ? bookingsData[category] : [bookingsData[category][monthIndex]];
-        filteredRevenue[category] = revenueData[category];
+        filteredBookings[category] = month === 'all' ? window.bookingsData[category] : [window.bookingsData[category][monthIndex]];
+        filteredRevenue[category] = window.revenueData[category];
       }
 
-      bookingsChart.data.labels = month === 'all' ? chartLabels : [month];
+      bookingsChart.data.labels = month === 'all' ? window.chartLabels : [month];
       bookingsChart.data.datasets = Object.keys(filteredBookings).map((cat, i) => ({
         label: cat,
         data: filteredBookings[cat],
-        borderColor: ['#4caf50', '#81c784', '#c8e6c9'][i],
-        fill: false
+        borderColor: ['#4caf50', '#81c784', '#a5d6a7'][i],
+        backgroundColor: 'transparent',
+        fill: false,
+        tension: 0.3,
+        pointRadius: 4,
+        pointHoverRadius: 6,
       }));
       bookingsChart.update();
 
@@ -310,6 +549,7 @@
       revenueChart.data.datasets[0].data = Object.values(filteredRevenue);
       revenueChart.update();
 
+      // Update KPIs
       const total = Object.values(filteredBookings).flat().reduce((a, b) => a + b, 0);
       const rev = Object.values(filteredRevenue).reduce((a, b) => a + b, 0);
       document.getElementById('totalBookings').textContent = total;
