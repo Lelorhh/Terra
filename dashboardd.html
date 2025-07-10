@@ -28,6 +28,9 @@
     a:hover {
       color: #4caf50;
     }
+    html {
+      scroll-behavior: smooth;
+    }
 
     /* Header */
     header {
@@ -128,6 +131,11 @@
       padding: 25px 20px;
       display: flex;
       flex-direction: column;
+      flex-shrink: 0;
+      position: sticky;
+      top: 100px;
+      height: calc(100vh - 140px);
+      overflow-y: auto;
     }
     .sidebar h2 {
       margin: 0 0 25px;
@@ -142,8 +150,9 @@
       padding: 10px 0;
       border-bottom: 1px solid #eee;
       transition: color 0.3s ease;
+      cursor: pointer;
     }
-    .sidebar a:hover {
+    .sidebar a:hover, .sidebar a.active {
       color: #4caf50;
     }
 
@@ -152,7 +161,8 @@
       flex-grow: 1;
       display: flex;
       flex-direction: column;
-      gap: 30px;
+      gap: 60px;
+      scroll-margin-top: 80px; /* For sticky header offset */
     }
 
     /* Filters */
@@ -292,6 +302,11 @@
       font-weight: 600;
     }
 
+    /* Section styling for scroll target */
+    section[id] {
+      scroll-margin-top: 80px; /* To offset sticky header */
+    }
+
     /* Responsive */
     @media (max-width: 1024px) {
       main {
@@ -303,6 +318,8 @@
         margin-bottom: 20px;
         flex-direction: row;
         overflow-x: auto;
+        height: auto;
+        position: static;
       }
       .sidebar a {
         flex: 0 0 auto;
@@ -346,170 +363,192 @@
   <main>
     <aside class="sidebar" aria-label="Sidebar navigation">
       <h2>Dashboard</h2>
-      <a href="#">Overview</a>
-      <a href="#">Bookings</a>
-      <a href="#">Listings</a>
-      <a href="#">Customers</a>
-      <a href="#">Revenue</a>
-      <a href="#">Impact</a>
-      <a href="#">Reports</a>
-      <a href="#">Settings</a>
+      <a href="#dashboard" class="active">Dashboard</a>
+      <a href="#overview">Overview</a>
+      <a href="#bookings">Bookings</a>
+      <a href="#listings">Listings</a>
+      <a href="#customers">Customers</a>
+      <a href="#revenue">Revenue</a>
+      <a href="#impact">Impact</a>
+      <a href="#reports">Reports</a>
+      <a href="#settings">Settings</a>
     </aside>
 
     <section class="dashboard-content" aria-live="polite">
-      <div class="filters" role="region" aria-label="Filter options">
-        <h3>Filter by Category and Month</h3>
-        <select id="categoryFilter" aria-label="Category filter">
-          <option value="all">All Categories</option>
-          <option value="Hotels">Hotels</option>
-          <option value="Eco Adventures">Eco Adventures</option>
-          <option value="Restaurants">Restaurants</option>
-        </select>
-        <select id="monthFilter" aria-label="Month filter">
-          <option value="all">All Months</option>
-          <option value="Feb">February</option>
-          <option value="Mar">March</option>
-          <option value="Apr">April</option>
-          <option value="May">May</option>
-          <option value="Jun">June</option>
-          <option value="Jul">July</option>
-        </select>
-        <button onclick="applyFilters()">Apply Filters</button>
-      </div>
-
-      <div class="kpis" role="region" aria-label="Key performance indicators">
-        <div class="kpi"><span id="totalBookings">207</span> Total Bookings</div>
-        <div class="kpi"><span>36</span> Active Listings</div>
-        <div class="kpi"><span id="monthlyRevenue">R56,000</span> Monthly Revenue</div>
-        <div class="kpi"><span>3,200kg</span> Carbon Offset</div>
-      </div>
-
-      <div class="chart-container" role="region" aria-label="Booking trends chart">
-        <h3>Booking Trends</h3>
-        <canvas id="bookingsChart"></canvas>
-      </div>
-
-      <div class="chart-container" role="region" aria-label="Revenue breakdown chart">
-        <h3>Revenue Breakdown</h3>
-        <canvas id="revenueChart"></canvas>
-      </div>
-
-      <div class="table-container" role="region" aria-label="Top performing listings table">
-        <h3>Top Performing Listings</h3>
-        <table>
-          <thead>
-            <tr><th>Name</th><th>Location</th><th>Bookings</th><th>Revenue</th><th>Rating</th></tr>
-          </thead>
-          <tbody id="listingsTable">
-            <tr><td>GreenHaven Lodge</td><td>Mpumalanga</td><td>85</td><td>R42,000</td><td>⭐ 4.8</td></tr>
-            <tr><td>Forest Edge Eco</td><td>Knysna</td><td>63</td><td>R31,500</td><td>⭐ 4.6</td></tr>
-            <tr><td>Safari Retreat</td><td>Limpopo</td><td>59</td><td>R29,800</td><td>⭐ 4.9</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="impact" role="region" aria-label="Environmental impact summary">
-        <h3>Environmental Impact</h3>
-        <p>🌱 Carbon Saved: 3,200 kg</p>
-        <p>🌳 Trees Planted: 150</p>
-        <p>👩‍🌾 Local Jobs Created: 28</p>
-        <div class="progress-bar" aria-label="Progress to tree planting goal">
-          <div class="progress" style="width: 75%"></div>
+      <section id="dashboard">
+        <div class="filters" role="region" aria-label="Filter options">
+          <h3>Filter by Category and Month</h3>
+          <select id="categoryFilter" aria-label="Category filter">
+            <option value="all">All Categories</option>
+            <option value="Hotels">Hotels</option>
+            <option value="Eco Adventures">Eco Adventures</option>
+            <option value="Restaurants">Restaurants</option>
+          </select>
+          <select id="monthFilter" aria-label="Month filter">
+            <option value="all">All Months</option>
+            <option value="Feb">February</option>
+            <option value="Mar">March</option>
+            <option value="Apr">April</option>
+            <option value="May">May</option>
+            <option value="Jun">June</option>
+            <option value="Jul">July</option>
+          </select>
+          <button onclick="applyFilters()">Apply Filters</button>
         </div>
-        <small>75% to 200-tree goal</small>
-      </div>
+
+        <div class="kpis" role="region" aria-label="Key performance indicators">
+          <div class="kpi"><span id="totalBookings">207</span> Total Bookings</div>
+          <div class="kpi"><span>36</span> Active Listings</div>
+          <div class="kpi"><span id="monthlyRevenue">R56,000</span> Monthly Revenue</div>
+          <div class="kpi"><span>3,200kg</span> Carbon Offset</div>
+        </div>
+
+        <div class="chart-container" role="region" aria-label="Booking trends chart">
+          <h3>Booking Trends</h3>
+          <canvas id="bookingsChart"></canvas>
+        </div>
+
+        <div class="chart-container" role="region" aria-label="Revenue breakdown chart">
+          <h3>Revenue Breakdown</h3>
+          <canvas id="revenueChart"></canvas>
+        </div>
+
+        <div class="table-container" role="region" aria-label="Top performing listings table">
+          <h3>Top Performing Listings</h3>
+          <table>
+            <thead>
+              <tr><th>Name</th><th>Location</th><th>Bookings</th><th>Revenue</th><th>Rating</th></tr>
+            </thead>
+            <tbody id="listingsTable">
+              <tr><td>GreenHaven Lodge</td><td>Mpumalanga</td><td>85</td><td>R42,000</td><td>⭐ 4.8</td></tr>
+              <tr><td>Forest Edge Eco</td><td>Knysna</td><td>63</td><td>R31,500</td><td>⭐ 4.6</td></tr>
+              <tr><td>Safari Retreat</td><td>Limpopo</td><td>59</td><td>R29,800</td><td>⭐ 4.9</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="impact" role="region" aria-label="Environmental impact summary">
+          <h3>Environmental Impact</h3>
+          <p>🌱 Carbon Saved: 3,200 kg</p>
+          <p>🌳 Trees Planted: 150</p>
+          <p>👩‍🌾 Local Jobs Created: 28</p>
+          <div class="progress-bar" aria-label="Progress to tree planting goal">
+            <div class="progress" style="width: 75%"></div>
+          </div>
+          <small>75% to 200-tree goal</small>
+        </div>
+      </section>
+
+      <section id="overview" style="padding: 30px; background: white; border-radius: 12px;">
+        <h2>Overview</h2>
+        <p>Overview content will be added here.</p>
+      </section>
+
+      <section id="bookings" style="padding: 30px; background: white; border-radius: 12px;">
+        <h2>Bookings</h2>
+        <p>Bookings management content will be added here.</p>
+      </section>
+
+      <section id="listings" style="padding: 30px; background: white; border-radius: 12px;">
+        <h2>Listings</h2>
+        <p>Listings management content will be added here.</p>
+      </section>
+
+      <section id="customers" style="padding: 30px; background: white; border-radius: 12px;">
+        <h2>Customers</h2>
+        <p>Customer management content will be added here.</p>
+      </section>
+
+      <section id="revenue" style="padding: 30px; background: white; border-radius: 12px;">
+        <h2>Revenue</h2>
+        <p>Revenue tracking content will be added here.</p>
+      </section>
+
+      <section id="impact" style="padding: 30px; background: white; border-radius: 12px;">
+        <h2>Impact</h2>
+        <p>Environmental and social impact content will be added here.</p>
+      </section>
+
+      <section id="reports" style="padding: 30px; background: white; border-radius: 12px;">
+        <h2>Reports</h2>
+        <p>Reports and analytics content will be added here.</p>
+      </section>
+
+      <section id="settings" style="padding: 30px; background: white; border-radius: 12px;">
+        <h2>Settings</h2>
+        <p>Settings and preferences will be managed here.</p>
+      </section>
     </section>
   </main>
 
   <script>
-    const chartLabels = ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'];
-
-    async function fetchData() {
-      try {
-        // Replace with your actual endpoint returning JSON like:
-        // { bookingsData: {...}, revenueData: {...}, chartLabels: [...] }
-        const response = await fetch('https://example.com/api/dashboard-data');
-        const data = await response.json();
-
-        window.bookingsData = data.bookingsData;
-        window.revenueData = data.revenueData;
-        window.chartLabels = data.chartLabels || chartLabels;
-
-        createCharts();
-      } catch (error) {
-        console.error('Failed to load live data:', error);
-        // Fallback sample data if fetch fails
-        window.bookingsData = {
-          Hotels: [35, 45, 50, 60, 70, 75],
-          'Eco Adventures': [15, 18, 20, 25, 28, 30],
-          Restaurants: [20, 22, 24, 27, 30, 32]
-        };
-        window.revenueData = {
-          Hotels: 42000,
-          'Eco Adventures': 15000,
-          Restaurants: 23000
-        };
-        window.chartLabels = chartLabels;
-        createCharts();
-      }
-    }
+    // Sample fallback data - replace with your live API endpoint and structure as needed
+    window.chartLabels = ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'];
+    window.bookingsData = {
+      Hotels: [30, 40, 35, 50, 55, 60],
+      'Eco Adventures': [20, 25, 30, 28, 35, 40],
+      Restaurants: [15, 18, 20, 22, 25, 30]
+    };
+    window.revenueData = {
+      Hotels: 42000,
+      'Eco Adventures': 31000,
+      Restaurants: 23000
+    };
 
     let bookingsChart, revenueChart;
 
     function createCharts() {
-      try {
-        const bookingsCtx = document.getElementById('bookingsChart').getContext('2d');
-        bookingsChart = new Chart(bookingsCtx, {
-          type: 'line',
-          data: {
-            labels: window.chartLabels,
-            datasets: Object.keys(window.bookingsData).map((category, i) => ({
-              label: category,
-              data: window.bookingsData[category],
-              borderColor: ['#4caf50', '#81c784', '#a5d6a7'][i],
-              backgroundColor: 'transparent',
-              fill: false,
-              tension: 0.3,
-              pointRadius: 4,
-              pointHoverRadius: 6,
-            }))
+      const bookingsCtx = document.getElementById('bookingsChart').getContext('2d');
+      bookingsChart = new Chart(bookingsCtx, {
+        type: 'line',
+        data: {
+          labels: window.chartLabels,
+          datasets: Object.keys(window.bookingsData).map((category, i) => ({
+            label: category,
+            data: window.bookingsData[category],
+            borderColor: ['#4caf50', '#81c784', '#a5d6a7'][i],
+            backgroundColor: 'transparent',
+            fill: false,
+            tension: 0.3,
+            pointRadius: 4,
+            pointHoverRadius: 6
+          }))
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            mode: 'nearest',
+            intersect: false
           },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: { position: 'top', labels: { font: { size: 14 } } },
-              tooltip: { mode: 'index', intersect: false }
-            },
-            scales: {
-              y: { beginAtZero: true, ticks: { stepSize: 10 } }
-            }
+          plugins: {
+            legend: { position: 'top' },
+            tooltip: { enabled: true }
+          },
+          scales: {
+            y: { beginAtZero: true }
           }
-        });
+        }
+      });
 
-        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
-        revenueChart = new Chart(revenueCtx, {
-          type: 'doughnut',
-          data: {
-            labels: Object.keys(window.revenueData),
-            datasets: [{
-              data: Object.values(window.revenueData),
-              backgroundColor: ['#4caf50', '#81c784', '#a5d6a7'],
-              hoverOffset: 20,
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            cutout: '70%',
-            plugins: {
-              legend: { position: 'bottom', labels: { font: { size: 14 } } }
-            }
+      const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+      revenueChart = new Chart(revenueCtx, {
+        type: 'pie',
+        data: {
+          labels: Object.keys(window.revenueData),
+          datasets: [{
+            data: Object.values(window.revenueData),
+            backgroundColor: ['#388e3c', '#66bb6a', '#a5d6a7']
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom' }
           }
-        });
-      } catch (err) {
-        console.error('Chart rendering failed:', err);
-      }
+        }
+      });
     }
 
     function applyFilters() {
@@ -556,7 +595,18 @@
       document.getElementById('monthlyRevenue').textContent = `R${rev.toLocaleString()}`;
     }
 
-    window.onload = fetchData;
+    window.onload = () => {
+      createCharts();
+
+      // Sidebar active link toggling
+      const sidebarLinks = document.querySelectorAll('.sidebar a');
+      sidebarLinks.forEach(link => {
+        link.addEventListener('click', e => {
+          sidebarLinks.forEach(l => l.classList.remove('active'));
+          e.target.classList.add('active');
+        });
+      });
+    };
   </script>
 </body>
 </html>
