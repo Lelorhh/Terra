@@ -6,6 +6,7 @@
   <title>TerraBook Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver"></script>
   <style>
     * {
       box-sizing: border-box;
@@ -70,6 +71,15 @@
       padding: 8px;
       font-size: 14px;
     }
+    .download-btn {
+      margin-top: 10px;
+      padding: 8px 12px;
+      background: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -100,7 +110,9 @@
       <div class="chart-container">
         <canvas id="liveChart"></canvas>
         <canvas id="pieChart"></canvas>
+        <canvas id="barChart"></canvas>
       </div>
+      <button class="download-btn" onclick="downloadCharts()">Download Report</button>
     </div>
 
     <div id="bookings" class="section-content">
@@ -222,9 +234,45 @@
       });
     }
 
+    function startBarChart() {
+      const ctx = document.getElementById('barChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+          datasets: [{
+            label: 'Monthly Revenue',
+            data: [10000, 12000, 9000, 14000, 11000, 15000],
+            backgroundColor: 'rgba(33, 150, 243, 0.6)',
+            borderColor: '#2196f3',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+
+    function downloadCharts() {
+      const canvasList = ['liveChart', 'pieChart', 'barChart'];
+      canvasList.forEach(id => {
+        const canvas = document.getElementById(id);
+        canvas.toBlob(blob => {
+          saveAs(blob, `${id}.png`);
+        });
+      });
+    }
+
     window.onload = () => {
       startLiveChart();
       startPieChart();
+      startBarChart();
     };
   </script>
 </body>
