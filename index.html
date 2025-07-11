@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TerraBook - Login</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     :root {
       --green-primary: #27ae60;
@@ -47,16 +48,21 @@
     h1 {
       color: var(--green-dark);
       font-weight: 700;
-      margin-bottom: 1rem;
+      margin-bottom: 0.5rem;
       font-size: 1.8rem;
-      letter-spacing: 0.1em;
+    }
+
+    #loginTypeIndicator {
+      font-size: 0.9rem;
+      color: var(--gray-medium);
+      margin-bottom: 1.5rem;
     }
 
     .user-type-toggle {
       display: flex;
       justify-content: center;
       gap: 1rem;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
     }
 
     .user-type-toggle button {
@@ -89,12 +95,24 @@
       font-size: 0.9rem;
     }
 
-    input {
-      padding: 0.75rem 1rem;
+    .input-group {
+      position: relative;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 0.75rem 2.5rem 0.75rem 2.5rem;
       border: 2px solid var(--green-primary);
       border-radius: var(--border-radius);
       font-size: 1rem;
-      width: 100%;
+    }
+
+    .input-group i {
+      position: absolute;
+      top: 50%;
+      left: 10px;
+      transform: translateY(-50%);
+      color: var(--green-dark);
     }
 
     .password-wrapper {
@@ -136,6 +154,11 @@
       background-color: var(--green-dark);
     }
 
+    button[type="submit"]:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
     .social-login {
       margin: 1.5rem 0;
     }
@@ -146,19 +169,16 @@
       justify-content: center;
       gap: 0.5rem;
       padding: 0.75rem;
-      border: 1px solid #ddd;
+      border: none;
       border-radius: var(--border-radius);
-      margin-bottom: 0.75rem;
-      background-color: var(--white);
-      cursor: pointer;
+      margin-bottom: 0.5rem;
       font-weight: 500;
-      color: #444;
-      transition: 0.3s;
+      cursor: pointer;
     }
 
-    .social-btn:hover {
-      background-color: var(--gray-light);
-    }
+    .google { background: #fff; color: #000; border: 1px solid #ccc; }
+    .facebook { background: #1877f2; color: #fff; }
+    .apple { background: #000; color: #fff; }
 
     .terms {
       font-size: 0.8rem;
@@ -185,18 +205,12 @@
       font-size: 0.8rem;
       color: #999;
     }
-
-    @media (max-width: 480px) {
-      .login-container {
-        padding: 1.5rem;
-        margin: 1rem;
-      }
-    }
   </style>
 </head>
 <body>
   <main class="login-container">
     <h1>TerraBook Login</h1>
+    <div id="loginTypeIndicator">You are logging in as a <strong>Customer</strong>.</div>
 
     <div class="user-type-toggle">
       <button id="customerTab" class="active">Customer</button>
@@ -204,11 +218,15 @@
     </div>
 
     <form id="loginForm" novalidate>
-      <label for="email" id="emailLabel">Email Address</label>
-      <input type="email" id="email" placeholder="you@example.com" required />
+      <label for="email">Email Address</label>
+      <div class="input-group">
+        <i class="fa fa-envelope"></i>
+        <input type="email" id="email" placeholder="you@example.com" required />
+      </div>
 
       <label for="password">Password</label>
-      <div class="password-wrapper">
+      <div class="input-group password-wrapper">
+        <i class="fa fa-lock"></i>
         <input type="password" id="password" placeholder="Your password" required />
         <button type="button" class="toggle-password">Show</button>
       </div>
@@ -218,15 +236,15 @@
         <a href="#">Forgot Password?</a>
       </div>
 
-      <button type="submit">Log In</button>
+      <button type="submit" id="submitBtn" disabled>Log In</button>
       <div id="loginError" aria-live="polite"></div>
     </form>
 
     <div class="social-login">
       <p style="font-size: 0.9rem; color: #555;">Or login with:</p>
-      <button class="social-btn"><img src="https://img.icons8.com/color/16/google-logo.png"/> Google</button>
-      <button class="social-btn"><img src="https://img.icons8.com/ios-filled/16/mac-os.png"/> Apple ID</button>
-      <button class="social-btn"><img src="https://img.icons8.com/color/16/facebook.png"/> Facebook</button>
+      <button class="social-btn google"><i class="fab fa-google"></i> Google</button>
+      <button class="social-btn apple"><i class="fab fa-apple"></i> Apple ID</button>
+      <button class="social-btn facebook"><i class="fab fa-facebook-f"></i> Facebook</button>
     </div>
 
     <div class="terms">
@@ -241,28 +259,32 @@
   <script>
     const customerTab = document.getElementById("customerTab");
     const businessTab = document.getElementById("businessTab");
+    const loginTypeIndicator = document.getElementById("loginTypeIndicator");
     const emailInput = document.getElementById("email");
-    const emailLabel = document.getElementById("emailLabel");
     const passwordInput = document.getElementById("password");
     const togglePasswordBtn = document.querySelector(".toggle-password");
+    const loginForm = document.getElementById("loginForm");
     const loginError = document.getElementById("loginError");
+    const submitBtn = document.getElementById("submitBtn");
 
-    let userType = "customer";
+    let userType = localStorage.getItem("lastUserType") || "customer";
+
+    function updateUserTypeUI() {
+      loginTypeIndicator.innerHTML = `You are logging in as a <strong>${userType.charAt(0).toUpperCase() + userType.slice(1)}</strong>.`;
+      customerTab.classList.toggle("active", userType === "customer");
+      businessTab.classList.toggle("active", userType === "business");
+    }
 
     customerTab.onclick = () => {
       userType = "customer";
-      customerTab.classList.add("active");
-      businessTab.classList.remove("active");
-      emailLabel.textContent = "Email Address";
-      emailInput.placeholder = "you@example.com";
+      localStorage.setItem("lastUserType", userType);
+      updateUserTypeUI();
     };
 
     businessTab.onclick = () => {
       userType = "business";
-      businessTab.classList.add("active");
-      customerTab.classList.remove("active");
-      emailLabel.textContent = "Business Email";
-      emailInput.placeholder = "business@example.com";
+      localStorage.setItem("lastUserType", userType);
+      updateUserTypeUI();
     };
 
     togglePasswordBtn.onclick = () => {
@@ -275,29 +297,22 @@
       }
     };
 
-    document.getElementById("loginForm").addEventListener("submit", function (e) {
+    loginForm.addEventListener("input", () => {
+      const valid = emailInput.value.trim() && passwordInput.value.trim();
+      submitBtn.disabled = !valid;
+    });
+
+    loginForm.addEventListener("submit", function (e) {
       e.preventDefault();
       loginError.textContent = "";
-
-      const email = emailInput.value.trim();
-      const password = passwordInput.value.trim();
-
-      if (!email || !password) {
-        loginError.textContent = "Please enter your email and password.";
-        return;
-      }
-
-      // Placeholder login logic
-      if (email === "demo@example.com" && password === "password") {
-        alert(`Login successful as ${userType}! Redirecting...`);
-        window.location.href = "dashboard.html";
-      } else {
-        loginError.textContent = "Invalid login. Please try again.";
-      }
+      alert(`Login successful as ${userType}! Redirecting...`);
     });
+
+    updateUserTypeUI();
   </script>
 </body>
 </html>
+
 
 
 
