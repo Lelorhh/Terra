@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TerraBook - Login</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
@@ -18,105 +18,87 @@
       --font-family: 'Poppins', sans-serif;
     }
 
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: var(--font-family);
-      background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);
-      color: var(--gray-dark);
       margin: 0;
+      padding: 0;
+      background-color: var(--white);
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      padding: 1rem;
+      min-height: 100vh;
+      flex-direction: column;
     }
 
     .login-container {
       background-color: var(--white);
       border-radius: var(--border-radius);
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-      padding: 2.5rem 2rem 3rem;
-      max-width: 420px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
       width: 100%;
+      max-width: 420px;
       text-align: center;
-      box-sizing: border-box;
-      position: relative;
     }
 
     h1 {
       color: var(--green-dark);
       font-weight: 700;
-      margin-bottom: 1.5rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
+      margin-bottom: 1rem;
       font-size: 1.8rem;
+      letter-spacing: 0.1em;
     }
 
-    /* User type toggle */
     .user-type-toggle {
       display: flex;
       justify-content: center;
-      margin-bottom: 1.75rem;
       gap: 1rem;
+      margin-bottom: 1.5rem;
     }
 
     .user-type-toggle button {
       flex: 1;
-      background: var(--gray-light);
+      padding: 0.6rem;
       border: none;
-      padding: 0.6rem 1rem;
       border-radius: var(--border-radius);
+      background-color: var(--gray-light);
       font-weight: 600;
       color: var(--green-dark);
       cursor: pointer;
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-      transition: background-color 0.3s ease, color 0.3s ease;
-      user-select: none;
+      transition: 0.3s;
     }
 
     .user-type-toggle button.active {
-      background: var(--green-primary);
+      background-color: var(--green-primary);
       color: var(--white);
-      box-shadow: 0 6px 14px var(--shadow-light);
     }
 
     form {
       display: flex;
       flex-direction: column;
-      gap: 1.25rem;
+      gap: 1rem;
     }
 
     label {
       text-align: left;
       font-weight: 600;
       color: var(--green-dark);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
     }
 
-    input[type='email'],
-    input[type='password'] {
-      width: 100%;
+    input {
       padding: 0.75rem 1rem;
       border: 2px solid var(--green-primary);
       border-radius: var(--border-radius);
       font-size: 1rem;
-      outline-offset: 2px;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
-      box-sizing: border-box;
-    }
-
-    input[type='email']:focus,
-    input[type='password']:focus {
-      border-color: var(--green-dark);
-      box-shadow: 0 0 6px var(--green-dark);
-      outline: none;
+      width: 100%;
     }
 
     .password-wrapper {
       position: relative;
-      width: 100%;
     }
 
     .toggle-password {
@@ -126,298 +108,195 @@
       transform: translateY(-50%);
       background: none;
       border: none;
-      cursor: pointer;
-      font-size: 0.9rem;
       color: var(--green-dark);
-      padding: 0;
-      user-select: none;
+      cursor: pointer;
     }
 
     .remember-me {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      font-size: 0.9rem;
+      align-items: center;
+      font-size: 0.85rem;
       color: var(--gray-medium);
-    }
-
-    .remember-me input {
-      margin-right: 0.5rem;
-      cursor: pointer;
     }
 
     button[type="submit"] {
       background-color: var(--green-primary);
       color: var(--white);
-      font-weight: 700;
-      font-size: 1.1rem;
-      padding: 0.85rem 1.5rem;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.75rem;
       border: none;
       border-radius: var(--border-radius);
       cursor: pointer;
-      text-transform: uppercase;
-      letter-spacing: 1.1px;
-      box-shadow: 0 4px 12px var(--shadow-light);
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
-      margin-top: 1rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 0.5rem;
+      transition: 0.3s ease;
     }
 
-    button[type="submit"]:hover:not(:disabled) {
+    button[type="submit"]:hover {
       background-color: var(--green-dark);
-      box-shadow: 0 6px 18px var(--shadow-light);
     }
 
-    button[type="submit"]:disabled {
-      background-color: #a5d6a7;
-      cursor: not-allowed;
-      box-shadow: none;
+    .social-login {
+      margin: 1.5rem 0;
     }
 
-    .spinner {
-      border: 3px solid rgba(255, 255, 255, 0.3);
-      border-top: 3px solid var(--white);
-      border-radius: 50%;
-      width: 18px;
-      height: 18px;
-      animation: spin 1s linear infinite;
+    .social-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius);
+      margin-bottom: 0.75rem;
+      background-color: var(--white);
+      cursor: pointer;
+      font-weight: 500;
+      color: #444;
+      transition: 0.3s;
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    .social-btn:hover {
+      background-color: var(--gray-light);
     }
 
-    .register-link {
-      margin-top: 1.25rem;
-      font-size: 0.95rem;
-      color: var(--green-primary);
+    .terms {
+      font-size: 0.8rem;
+      color: var(--gray-medium);
+      margin-top: 1rem;
     }
 
-    .register-link a {
+    .terms a {
       color: var(--green-dark);
-      font-weight: 600;
       text-decoration: none;
-    }
-
-    .register-link a:hover {
-      text-decoration: underline;
+      font-weight: 600;
     }
 
     #loginError {
-      color: #e74c3c;
+      color: red;
       font-size: 0.9rem;
-      margin-top: 0.5rem;
       min-height: 1.2em;
-      aria-live: polite;
-      font-weight: 600;
+      margin-top: 0.5rem;
+    }
+
+    footer {
+      margin-top: 2rem;
       text-align: center;
+      font-size: 0.8rem;
+      color: #999;
+    }
+
+    @media (max-width: 480px) {
+      .login-container {
+        padding: 1.5rem;
+        margin: 1rem;
+      }
     }
   </style>
 </head>
 <body>
-  <main class="login-container" role="main" aria-label="Login form">
+  <main class="login-container">
     <h1>TerraBook Login</h1>
 
-    <div class="user-type-toggle" role="tablist" aria-label="Select user type">
-      <button type="button" id="customerTab" class="active" role="tab" aria-selected="true" aria-controls="loginForm" tabindex="0">Customer</button>
-      <button type="button" id="businessTab" role="tab" aria-selected="false" aria-controls="loginForm" tabindex="-1">Business</button>
+    <div class="user-type-toggle">
+      <button id="customerTab" class="active">Customer</button>
+      <button id="businessTab">Business</button>
     </div>
 
     <form id="loginForm" novalidate>
       <label for="email" id="emailLabel">Email Address</label>
-      <input
-        type="email"
-        id="email"
-        name="email"
-        placeholder="you@example.com"
-        required
-        autocomplete="email username"
-        aria-describedby="emailLabel"
-        aria-required="true"
-      />
+      <input type="email" id="email" placeholder="you@example.com" required />
 
-      <label for="password" style="margin-bottom:0;">
-        Password
-        <button type="button" class="toggle-password" aria-label="Toggle password visibility" tabindex="-1">Show</button>
-      </label>
+      <label for="password">Password</label>
       <div class="password-wrapper">
-        <input
-          type="password"
-          id="password"
-          name="password"
-          placeholder="Your password"
-          required
-          autocomplete="current-password"
-          aria-required="true"
-        />
+        <input type="password" id="password" placeholder="Your password" required />
+        <button type="button" class="toggle-password">Show</button>
       </div>
 
       <div class="remember-me">
         <label><input type="checkbox" id="rememberMe" /> Remember Me</label>
-        <a href="#" class="forgot-password" tabindex="0">Forgot your password?</a>
+        <a href="#">Forgot Password?</a>
       </div>
 
-      <button type="submit" id="submitBtn">
-        Log In
-      </button>
+      <button type="submit">Log In</button>
       <div id="loginError" aria-live="polite"></div>
     </form>
 
-    <p class="register-link">
-      Don't have an account? <a href="register.html">Register here</a>
-    </p>
+    <div class="social-login">
+      <p style="font-size: 0.9rem; color: #555;">Or login with:</p>
+      <button class="social-btn"><img src="https://img.icons8.com/color/16/google-logo.png"/> Google</button>
+      <button class="social-btn"><img src="https://img.icons8.com/ios-filled/16/mac-os.png"/> Apple ID</button>
+      <button class="social-btn"><img src="https://img.icons8.com/color/16/facebook.png"/> Facebook</button>
+    </div>
+
+    <div class="terms">
+      By signing in, you agree to our <a href="#">Terms & Conditions</a>.
+    </div>
   </main>
 
+  <footer>
+    &copy; TerraBook 2025. All rights reserved.
+  </footer>
+
   <script>
-    (() => {
-      // Sample data for demo: users and businesses
-      // In real app, you would fetch these from backend or secure storage
-      const customers = JSON.parse(localStorage.getItem('terraCustomers') || '[]');
-      const businesses = JSON.parse(localStorage.getItem('terraBusinesses') || '[]');
+    const customerTab = document.getElementById("customerTab");
+    const businessTab = document.getElementById("businessTab");
+    const emailInput = document.getElementById("email");
+    const emailLabel = document.getElementById("emailLabel");
+    const passwordInput = document.getElementById("password");
+    const togglePasswordBtn = document.querySelector(".toggle-password");
+    const loginError = document.getElementById("loginError");
 
-      const loginForm = document.getElementById('loginForm');
-      const loginError = document.getElementById('loginError');
-      const rememberMe = document.getElementById('rememberMe');
-      const submitBtn = document.getElementById('submitBtn');
-      const passwordInput = document.getElementById('password');
-      const togglePasswordBtn = document.querySelector('.toggle-password');
+    let userType = "customer";
 
-      const customerTab = document.getElementById('customerTab');
-      const businessTab = document.getElementById('businessTab');
-      const emailInput = document.getElementById('email');
-      const emailLabel = document.getElementById('emailLabel');
+    customerTab.onclick = () => {
+      userType = "customer";
+      customerTab.classList.add("active");
+      businessTab.classList.remove("active");
+      emailLabel.textContent = "Email Address";
+      emailInput.placeholder = "you@example.com";
+    };
 
-      let activeUserType = 'customer'; // default
+    businessTab.onclick = () => {
+      userType = "business";
+      businessTab.classList.add("active");
+      customerTab.classList.remove("active");
+      emailLabel.textContent = "Business Email";
+      emailInput.placeholder = "business@example.com";
+    };
 
-      // Auto-login if remembered user exists for either type
-      const rememberedCustomer = JSON.parse(localStorage.getItem('terraRememberedCustomer'));
-      const rememberedBusiness = JSON.parse(localStorage.getItem('terraRememberedBusiness'));
-      if (rememberedCustomer) {
-        sessionStorage.setItem('terraLoggedInUser', JSON.stringify(rememberedCustomer));
-        window.location.href = 'dashboard.html';
-      } else if (rememberedBusiness) {
-        sessionStorage.setItem('terraLoggedInUser', JSON.stringify(rememberedBusiness));
-        window.location.href = 'dashboard.html';
+    togglePasswordBtn.onclick = () => {
+      if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        togglePasswordBtn.textContent = "Hide";
+      } else {
+        passwordInput.type = "password";
+        togglePasswordBtn.textContent = "Show";
+      }
+    };
+
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      loginError.textContent = "";
+
+      const email = emailInput.value.trim();
+      const password = passwordInput.value.trim();
+
+      if (!email || !password) {
+        loginError.textContent = "Please enter your email and password.";
+        return;
       }
 
-      // Toggle password visibility
-      togglePasswordBtn.addEventListener('click', () => {
-        const type = passwordInput.getAttribute('type');
-        if (type === 'password') {
-          passwordInput.setAttribute('type', 'text');
-          togglePasswordBtn.textContent = 'Hide';
-        } else {
-          passwordInput.setAttribute('type', 'password');
-          togglePasswordBtn.textContent = 'Show';
-        }
-      });
-
-      // Switch user type (Customer or Business)
-      function switchUserType(type) {
-        if (type === activeUserType) return;
-
-        activeUserType = type;
-
-        if (type === 'customer') {
-          customerTab.classList.add('active');
-          businessTab.classList.remove('active');
-          customerTab.setAttribute('aria-selected', 'true');
-          businessTab.setAttribute('aria-selected', 'false');
-          customerTab.tabIndex = 0;
-          businessTab.tabIndex = -1;
-
-          emailLabel.textContent = 'Email Address';
-          emailInput.placeholder = 'you@example.com';
-          rememberMe.checked = false;
-        } else {
-          businessTab.classList.add('active');
-          customerTab.classList.remove('active');
-          businessTab.setAttribute('aria-selected', 'true');
-          customerTab.setAttribute('aria-selected', 'false');
-          businessTab.tabIndex = 0;
-          customerTab.tabIndex = -1;
-
-          emailLabel.textContent = 'Business Email';
-          emailInput.placeholder = 'business@example.com';
-          rememberMe.checked = false;
-        }
-        loginError.textContent = '';
-        loginForm.reset();
-        passwordInput.setAttribute('type', 'password');
-        togglePasswordBtn.textContent = 'Show';
+      // Placeholder login logic
+      if (email === "demo@example.com" && password === "password") {
+        alert(`Login successful as ${userType}! Redirecting...`);
+        window.location.href = "dashboard.html";
+      } else {
+        loginError.textContent = "Invalid login. Please try again.";
       }
-
-      customerTab.addEventListener('click', () => switchUserType('customer'));
-      businessTab.addEventListener('click', () => switchUserType('business'));
-
-      // Simple email format validation
-      function validateEmail(email) {
-        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return re.test(email.toLowerCase());
-      }
-
-      loginForm.addEventListener('submit', e => {
-        e.preventDefault();
-        loginError.textContent = '';
-
-        const email = emailInput.value.trim().toLowerCase();
-        const password = passwordInput.value.trim();
-
-        if (!validateEmail(email)) {
-          loginError.textContent = 'Please enter a valid email address.';
-          emailInput.focus();
-          return;
-        }
-        if (password.length < 6) {
-          loginError.textContent = 'Password must be at least 6 characters.';
-          passwordInput.focus();
-          return;
-        }
-
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = `<span class="spinner" aria-hidden="true"></span> Logging in...`;
-
-        setTimeout(() => {
-          let foundUser;
-          if (activeUserType === 'customer') {
-            foundUser = customers.find(u => u.email === email && u.password === password);
-          } else {
-            foundUser = businesses.find(u => u.email === email && u.password === password);
-          }
-
-          if (foundUser) {
-            sessionStorage.setItem('terraLoggedInUser', JSON.stringify(foundUser));
-            if (rememberMe.checked) {
-              if (activeUserType === 'customer') {
-                localStorage.setItem('terraRememberedCustomer', JSON.stringify(foundUser));
-                localStorage.removeItem('terraRememberedBusiness');
-              } else {
-                localStorage.setItem('terraRememberedBusiness', JSON.stringify(foundUser));
-                localStorage.removeItem('terraRememberedCustomer');
-              }
-            } else {
-              if (activeUserType === 'customer') {
-                localStorage.removeItem('terraRememberedCustomer');
-              } else {
-                localStorage.removeItem('terraRememberedBusiness');
-              }
-            }
-            alert(`Login successful as ${activeUserType}! Redirecting to your dashboard...`);
-            window.location.href = 'dashboard.html';
-          } else {
-            loginError.textContent = 'Invalid email or password. Please try again.';
-            passwordInput.value = '';
-            passwordInput.focus();
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Log In';
-          }
-        }, 800);
-      });
-    })();
+    });
   </script>
 </body>
 </html>
+
 
