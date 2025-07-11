@@ -38,6 +38,7 @@
       max-width: 400px;
       width: 100%;
       text-align: center;
+      box-sizing: border-box;
     }
 
     h1 {
@@ -58,6 +59,9 @@
       text-align: left;
       font-weight: 600;
       color: var(--green-dark);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
     input[type='email'],
@@ -69,11 +73,33 @@
       font-size: 1rem;
       outline-offset: 2px;
       transition: border-color 0.3s ease;
+      box-sizing: border-box;
     }
 
     input[type='email']:focus,
     input[type='password']:focus {
       border-color: var(--green-dark);
+      box-shadow: 0 0 4px var(--green-dark);
+      outline: none;
+    }
+
+    .password-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: var(--green-dark);
+      padding: 0;
+      user-select: none;
     }
 
     .remember-me {
@@ -86,9 +112,10 @@
 
     .remember-me input {
       margin-right: 0.5rem;
+      cursor: pointer;
     }
 
-    button {
+    button[type="submit"] {
       background-color: var(--green-primary);
       color: var(--white);
       font-weight: 600;
@@ -102,11 +129,34 @@
       box-shadow: 0 4px 8px var(--shadow-light);
       transition: background-color 0.3s ease, box-shadow 0.3s ease;
       margin-top: 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
     }
 
-    button:hover {
+    button[type="submit"]:hover:not(:disabled) {
       background-color: var(--green-dark);
       box-shadow: 0 6px 14px var(--shadow-light);
+    }
+
+    button[type="submit"]:disabled {
+      background-color: #a5d6a7;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .spinner {
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-top: 3px solid var(--white);
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
 
     .register-link,
@@ -141,6 +191,8 @@
       color: red;
       font-size: 0.9rem;
       margin-top: 0.5rem;
+      min-height: 1.2em;
+      aria-live: polite;
     }
   </style>
 </head>
@@ -149,15 +201,38 @@
     <h1>TerraBook Login</h1>
     <form id="loginForm" novalidate>
       <label for="email">Email Address</label>
-      <input type="email" id="email" name="email" placeholder="you@example.com" required autocomplete="email" />
-      <label for="password">Password</label>
-      <input type="password" id="password" name="password" placeholder="Your password" required autocomplete="current-password" />
+      <input
+        type="email"
+        id="email"
+        name="email"
+        placeholder="you@example.com"
+        required
+        autocomplete="email username"
+        aria-describedby="emailHelp"
+        aria-required="true"
+      />
+      <label for="password" style="margin-bottom:0;">Password
+        <button type="button" class="toggle-password" aria-label="Toggle password visibility" tabindex="-1">Show</button>
+      </label>
+      <div class="password-wrapper">
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Your password"
+          required
+          autocomplete="current-password"
+          aria-required="true"
+        />
+      </div>
       <div class="remember-me">
         <label><input type="checkbox" id="rememberMe" /> Remember Me</label>
-        <a href="#" class="forgot-password">Forgot password?</a>
+        <a href="#" class="forgot-password" tabindex="0">Forgot your password?</a>
       </div>
-      <button type="submit">Log In</button>
-      <div id="loginError"></div>
+      <button type="submit" id="submitBtn">
+        Log In
+      </button>
+      <div id="loginError" aria-live="polite"></div>
     </form>
     <p class="register-link">
       Don't have an account? <a href="register.html">Register here</a>
@@ -173,40 +248,87 @@
   </main>
 
   <script>
-    const users = JSON.parse(localStorage.getItem('terraUsers') || '[]');
-    const loginForm = document.getElementById('loginForm');
-    const loginError = document.getElementById('loginError');
-    const rememberMe = document.getElementById('rememberMe');
+    (() => {
+      const users = JSON.parse(localStorage.getItem('terraUsers') || '[]');
+      const loginForm = document.getElementById('loginForm');
+      const loginError = document.getElementById('loginError');
+      const rememberMe = document.getElementById('rememberMe');
+      const submitBtn = document.getElementById('submitBtn');
+      const passwordInput = document.getElementById('password');
+      const togglePasswordBtn = document.querySelector('.toggle-password');
 
-    // Auto-login if remembered
-    const rememberedUser = JSON.parse(localStorage.getItem('terraRememberedUser'));
-    if (rememberedUser) {
-      sessionStorage.setItem('terraLoggedInUser', JSON.stringify(rememberedUser));
-      window.location.href = 'dashboard.html';
-    }
-
-    loginForm.addEventListener('submit', e => {
-      e.preventDefault();
-      loginError.textContent = '';
-
-      const email = e.target.email.value.trim().toLowerCase();
-      const password = e.target.password.value.trim();
-
-      const foundUser = users.find(user => user.email === email && user.password === password);
-
-      if (foundUser) {
-        sessionStorage.setItem('terraLoggedInUser', JSON.stringify(foundUser));
-        if (rememberMe.checked) {
-          localStorage.setItem('terraRememberedUser', JSON.stringify(foundUser));
-        } else {
-          localStorage.removeItem('terraRememberedUser');
-        }
-        alert('Login successful! Redirecting to your dashboard...');
+      // Auto-login if remembered
+      const rememberedUser = JSON.parse(localStorage.getItem('terraRememberedUser'));
+      if (rememberedUser) {
+        sessionStorage.setItem('terraLoggedInUser', JSON.stringify(rememberedUser));
+        // Could add a short delay or animation here if desired
         window.location.href = 'dashboard.html';
-      } else {
-        loginError.textContent = 'Invalid email or password. Please try again.';
       }
-    });
+
+      // Toggle password visibility
+      togglePasswordBtn.addEventListener('click', () => {
+        const type = passwordInput.getAttribute('type');
+        if (type === 'password') {
+          passwordInput.setAttribute('type', 'text');
+          togglePasswordBtn.textContent = 'Hide';
+        } else {
+          passwordInput.setAttribute('type', 'password');
+          togglePasswordBtn.textContent = 'Show';
+        }
+      });
+
+      // Simple email format validation
+      function validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email.toLowerCase());
+      }
+
+      loginForm.addEventListener('submit', e => {
+        e.preventDefault();
+        loginError.textContent = '';
+
+        const email = e.target.email.value.trim().toLowerCase();
+        const password = e.target.password.value.trim();
+
+        // Basic validation
+        if (!validateEmail(email)) {
+          loginError.textContent = 'Please enter a valid email address.';
+          e.target.email.focus();
+          return;
+        }
+        if (password.length < 6) {
+          loginError.textContent = 'Password must be at least 6 characters.';
+          e.target.password.focus();
+          return;
+        }
+
+        // Disable button and show spinner
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<span class="spinner" aria-hidden="true"></span> Logging in...`;
+
+        // Simulate async login for UX purposes (e.g., waiting for backend)
+        setTimeout(() => {
+          const foundUser = users.find(user => user.email === email && user.password === password);
+
+          if (foundUser) {
+            sessionStorage.setItem('terraLoggedInUser', JSON.stringify(foundUser));
+            if (rememberMe.checked) {
+              localStorage.setItem('terraRememberedUser', JSON.stringify(foundUser));
+            } else {
+              localStorage.removeItem('terraRememberedUser');
+            }
+            alert('Login successful! Redirecting to your dashboard...');
+            window.location.href = 'dashboard.html';
+          } else {
+            loginError.textContent = 'Invalid email or password. Please try again.';
+            e.target.password.value = '';
+            e.target.password.focus();
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Log In';
+          }
+        }, 800); // simulate network delay
+      });
+    })();
   </script>
 </body>
 </html>
