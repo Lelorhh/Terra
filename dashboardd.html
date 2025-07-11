@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>TerraBook Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/file-saver"></script>
   <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" defer></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css">
   <style>
     * {
       box-sizing: border-box;
@@ -16,21 +16,30 @@
     }
     body {
       margin: 0;
+      background: #f4fdf7;
       display: flex;
       height: 100vh;
-      background: #f4fdf7;
-      transition: background 0.5s ease;
+      /* center horizontally with padding top */
+      justify-content: flex-start;
+      padding-top: 134px;
     }
     .sidebar {
       width: 220px;
       background-color: #2e7d32;
       color: white;
       padding: 20px;
+      height: 932px;
+      position: fixed;
+      top: 134px;
+      left: 80px;
+      border-radius: 30px;
+      box-shadow: 0px 44px 84px 6px #d8d9db;
       transition: background-color 0.3s ease;
     }
     .sidebar h2 {
       font-size: 24px;
       margin-bottom: 30px;
+      user-select: none;
     }
     .sidebar a {
       display: block;
@@ -38,33 +47,56 @@
       text-decoration: none;
       margin-bottom: 15px;
       cursor: pointer;
-      transition: transform 0.2s;
+      padding: 8px 12px;
+      border-radius: 8px;
+      transition: background-color 0.3s, transform 0.2s;
+      user-select: none;
     }
     .sidebar a:hover {
+      background-color: #4caf50;
       transform: translateX(5px);
     }
+    .sidebar a.active {
+      background-color: #388e3c;
+      font-weight: 700;
+      pointer-events: none;
+    }
     .main {
-      flex: 1;
-      padding: 20px;
+      position: absolute;
+      width: 1440px;
+      height: 932px;
+      left: 320px; /* 80 + 220 + 20px gap */
+      top: 134px;
+      background: #FFFFFF;
+      box-shadow: 0px 44px 84px 6px #d8d9db;
+      border-radius: 30px;
+      padding: 30px 40px;
       overflow-y: auto;
       transition: all 0.4s ease-in-out;
     }
     .section-content {
       display: none;
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
       animation: fadeIn 0.8s ease-in-out;
-      transition: all 0.4s;
     }
     .section-content.active {
       display: block;
     }
     @keyframes fadeIn {
-      0% { opacity: 0; transform: translateY(20px); }
-      100% { opacity: 1; transform: translateY(0); }
+      0% {opacity: 0; transform: translateY(20px);}
+      100% {opacity: 1; transform: translateY(0);}
+    }
+    h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+    .filter-container {
+      margin-bottom: 20px;
+    }
+    .filter-container select {
+      padding: 8px;
+      font-size: 14px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
     }
     .chart-container {
       max-width: 600px;
@@ -74,43 +106,47 @@
       width: 100% !important;
       height: 300px !important;
     }
-    .filter-container {
-      margin-bottom: 20px;
-    }
-    .filter-container select {
-      padding: 8px;
-      font-size: 14px;
-    }
     .download-btn {
-      margin-top: 10px;
-      padding: 8px 12px;
+      margin-top: 20px;
+      padding: 10px 15px;
       background: #4caf50;
       color: white;
       border: none;
       border-radius: 8px;
       cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.3s;
     }
+    .download-btn:hover {
+      background: #388e3c;
+    }
+    /* Style the datatable */
     table.dataTable-table {
-      width: 100%;
+      width: 100% !important;
       margin-top: 20px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
     }
   </style>
 </head>
 <body>
-  <div class="sidebar">
-    <h2>TerraBook</h2>
-    <a onclick="showTab('dashboard')">Dashboard</a>
-    <a onclick="showTab('bookings')">Bookings</a>
-    <a onclick="showTab('listings')">Listings</a>
-    <a onclick="showTab('customers')">Customers</a>
-    <a onclick="showTab('revenue')">Revenue</a>
-    <a onclick="showTab('impact')">Impact</a>
-    <a onclick="showTab('reports')">Reports</a>
-    <a onclick="showTab('settings')">Settings</a>
-  </div>
 
-  <div class="main">
-    <div id="dashboard" class="section-content active">
+  <nav class="sidebar">
+    <h2>TerraBook</h2>
+    <a href="#" onclick="showTab('dashboard'); return false;" class="active">Dashboard</a>
+    <a href="#" onclick="showTab('bookings'); return false;">Bookings</a>
+    <a href="#" onclick="showTab('listings'); return false;">Listings</a>
+    <a href="#" onclick="showTab('customers'); return false;">Customers</a>
+    <a href="#" onclick="showTab('revenue'); return false;">Revenue</a>
+    <a href="#" onclick="showTab('impact'); return false;">Impact</a>
+    <a href="#" onclick="showTab('reports'); return false;">Reports</a>
+    <a href="#" onclick="showTab('settings'); return false;">Settings</a>
+  </nav>
+
+  <main class="main">
+    <!-- Dashboard Tab -->
+    <section id="dashboard" class="section-content active">
       <h3>Dashboard</h3>
       <p>Overview of key metrics and trends.</p>
       <div class="filter-container">
@@ -123,62 +159,84 @@
       </div>
       <div class="chart-container">
         <canvas id="liveChart"></canvas>
-        <canvas id="pieChart"></canvas>
-        <canvas id="barChart"></canvas>
+        <canvas id="pieChart" style="margin-top: 40px;"></canvas>
+        <canvas id="barChart" style="margin-top: 40px;"></canvas>
       </div>
-      <button class="download-btn" onclick="downloadCharts()">Download Report</button>
-    </div>
+      <button class="download-btn" onclick="downloadCharts()">Download Charts as PNG</button>
+    </section>
 
-    <div id="bookings" class="section-content">
+    <!-- Bookings Tab -->
+    <section id="bookings" class="section-content">
       <h3>Bookings</h3>
-      <table id="bookingTable">
+      <table id="bookingTable" class="datatable">
         <thead>
-          <tr><th>ID</th><th>Customer</th><th>Destination</th><th>Date</th><th>Status</th></tr>
+          <tr>
+            <th>Booking ID</th>
+            <th>Customer</th>
+            <th>Destination</th>
+            <th>Date</th>
+            <th>Status</th>
+          </tr>
         </thead>
         <tbody>
           <tr><td>1</td><td>Alice</td><td>Eco Lodge</td><td>2025-07-01</td><td>Confirmed</td></tr>
           <tr><td>2</td><td>Bob</td><td>Forest Retreat</td><td>2025-07-05</td><td>Pending</td></tr>
           <tr><td>3</td><td>Clara</td><td>River Camp</td><td>2025-07-08</td><td>Cancelled</td></tr>
+          <tr><td>4</td><td>David</td><td>Mountain Cabin</td><td>2025-07-10</td><td>Confirmed</td></tr>
+          <tr><td>5</td><td>Eva</td><td>Beach Resort</td><td>2025-07-12</td><td>Pending</td></tr>
         </tbody>
       </table>
-    </div>
+    </section>
 
-    <div id="listings" class="section-content">
+    <!-- Listings Tab -->
+    <section id="listings" class="section-content">
       <h3>Listings</h3>
       <p>Mock data: 36 active listings.</p>
-    </div>
+    </section>
 
-    <div id="customers" class="section-content">
+    <!-- Customers Tab -->
+    <section id="customers" class="section-content">
       <h3>Customers</h3>
       <p>Mock data: 1,230 customers.</p>
-    </div>
+    </section>
 
-    <div id="revenue" class="section-content">
+    <!-- Revenue Tab -->
+    <section id="revenue" class="section-content">
       <h3>Revenue</h3>
       <p>Revenue this month: R56,000.</p>
-    </div>
+    </section>
 
-    <div id="impact" class="section-content">
+    <!-- Impact Tab -->
+    <section id="impact" class="section-content">
       <h3>Impact</h3>
       <p>Carbon saved: 3,200kg, Jobs created: 28.</p>
-    </div>
+    </section>
 
-    <div id="reports" class="section-content">
+    <!-- Reports Tab -->
+    <section id="reports" class="section-content">
       <h3>Reports</h3>
       <p>Monthly booking and revenue reports available.</p>
-    </div>
+    </section>
 
-    <div id="settings" class="section-content">
+    <!-- Settings Tab -->
+    <section id="settings" class="section-content">
       <h3>Settings</h3>
       <p>User preferences and configurations.</p>
-    </div>
-  </div>
+    </section>
+  </main>
 
   <script>
     let maxPoints = 10;
-    let chart;
+    let liveChart;
 
     function showTab(tabId) {
+      // Remove active class from all links and add to the clicked one
+      document.querySelectorAll('.sidebar a').forEach(link => {
+        link.classList.remove('active');
+      });
+      document.querySelector(`.sidebar a[onclick*="${tabId}"]`).classList.add('active');
+
+      // Show the requested section, hide others
       document.querySelectorAll('.section-content').forEach(section => {
         section.classList.remove('active');
       });
@@ -200,7 +258,7 @@
           data: []
         }]
       };
-      chart = new Chart(ctx, {
+      liveChart = new Chart(ctx, {
         type: 'line',
         data: data,
         options: {
@@ -216,13 +274,13 @@
       setInterval(() => {
         const now = new Date().toLocaleTimeString();
         const value = Math.floor(Math.random() * 100);
-        if (chart.data.labels.length >= maxPoints) {
-          chart.data.labels.shift();
-          chart.data.datasets[0].data.shift();
+        if (liveChart.data.labels.length >= maxPoints) {
+          liveChart.data.labels.shift();
+          liveChart.data.datasets[0].data.shift();
         }
-        chart.data.labels.push(now);
-        chart.data.datasets[0].data.push(value);
-        chart.update();
+        liveChart.data.labels.push(now);
+        liveChart.data.datasets[0].data.push(value);
+        liveChart.update();
       }, 2000);
     }
 
@@ -274,9 +332,7 @@
         options: {
           responsive: true,
           scales: {
-            y: {
-              beginAtZero: true
-            }
+            y: { beginAtZero: true }
           }
         }
       });
@@ -296,10 +352,13 @@
       startLiveChart();
       startPieChart();
       startBarChart();
-      new simpleDatatables.DataTable("#bookingTable");
+
+      // Initialize datatable after scripts are loaded
+      const bookingTable = document.querySelector("#bookingTable");
+      if (bookingTable) {
+        new simpleDatatables.DataTable(bookingTable);
+      }
     };
   </script>
 </body>
 </html>
-
-        
