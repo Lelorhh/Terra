@@ -52,6 +52,30 @@
       font-size: 1.8rem;
     }
 
+    .user-type-toggle {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .user-type-toggle button {
+      flex: 1;
+      padding: 0.6rem;
+      border: none;
+      border-radius: var(--border-radius);
+      background-color: var(--gray-light);
+      font-weight: 600;
+      color: var(--green-dark);
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .user-type-toggle button.active {
+      background-color: var(--green-primary);
+      color: var(--white);
+    }
+
     form {
       display: flex;
       flex-direction: column;
@@ -146,6 +170,11 @@
       margin-top: 0.5rem;
     }
 
+    .strength {
+      font-size: 0.8rem;
+      color: var(--gray-medium);
+    }
+
     footer {
       margin-top: 2rem;
       text-align: center;
@@ -157,33 +186,42 @@
 <body>
   <main class="register-container">
     <h1>Create Your TerraBook Account</h1>
+
+    <div class="user-type-toggle">
+      <button id="customerTab" class="active">Customer</button>
+      <button id="businessTab">Business</button>
+    </div>
+
     <form id="registerForm" novalidate>
+      <input type="hidden" id="userType" value="customer" />
+
       <label for="fullName">Full Name</label>
       <div class="input-group">
         <i class="fa fa-user"></i>
-        <input type="text" id="fullName" placeholder="John Doe" required />
+        <input type="text" id="fullName" placeholder="John Doe" required autofocus tabindex="1" />
       </div>
 
       <label for="email">Email Address</label>
       <div class="input-group">
         <i class="fa fa-envelope"></i>
-        <input type="email" id="email" placeholder="you@example.com" required />
+        <input type="email" id="email" placeholder="you@example.com" required tabindex="2" />
       </div>
 
       <label for="password">Password</label>
       <div class="input-group password-wrapper">
         <i class="fa fa-lock"></i>
-        <input type="password" id="password" placeholder="Create password" required />
-        <button type="button" class="toggle-password">Show</button>
+        <input type="password" id="password" placeholder="Create password" required tabindex="3" />
+        <button type="button" class="toggle-password" tabindex="-1">Show</button>
       </div>
+      <div class="strength" id="strengthMessage"></div>
 
       <label for="confirmPassword">Confirm Password</label>
       <div class="input-group">
         <i class="fa fa-lock"></i>
-        <input type="password" id="confirmPassword" placeholder="Confirm password" required />
+        <input type="password" id="confirmPassword" placeholder="Confirm password" required tabindex="4" />
       </div>
 
-      <button type="submit">Register</button>
+      <button type="submit" tabindex="5">Register</button>
       <div id="registerError" aria-live="polite"></div>
     </form>
 
@@ -191,7 +229,7 @@
       By signing up, you agree to our <a href="#">Terms & Conditions</a>.
     </div>
 
-    <p class="switch-link">Already have an account? <a href="login.html">Login here</a></p>
+    <p class="switch-link">Already have an account? <a href="#" onclick="goToLogin()">Login here</a></p>
   </main>
 
   <footer>
@@ -204,6 +242,22 @@
     const confirmPasswordInput = document.getElementById("confirmPassword");
     const togglePasswordBtn = document.querySelector(".toggle-password");
     const registerError = document.getElementById("registerError");
+    const userTypeInput = document.getElementById("userType");
+    const customerTab = document.getElementById("customerTab");
+    const businessTab = document.getElementById("businessTab");
+    const strengthMessage = document.getElementById("strengthMessage");
+
+    customerTab.onclick = () => {
+      userTypeInput.value = "customer";
+      customerTab.classList.add("active");
+      businessTab.classList.remove("active");
+    };
+
+    businessTab.onclick = () => {
+      userTypeInput.value = "business";
+      businessTab.classList.add("active");
+      customerTab.classList.remove("active");
+    };
 
     togglePasswordBtn.onclick = () => {
       const type = passwordInput.type === "password" ? "text" : "password";
@@ -211,14 +265,29 @@
       togglePasswordBtn.textContent = type === "password" ? "Show" : "Hide";
     };
 
+    passwordInput.addEventListener("input", () => {
+      const val = passwordInput.value;
+      if (val.length < 6) {
+        strengthMessage.textContent = "Too short";
+        strengthMessage.style.color = "red";
+      } else if (!/[A-Z]/.test(val) || !/[0-9]/.test(val) || !/[!@#$%^&*]/.test(val)) {
+        strengthMessage.textContent = "Weak (Add uppercase, number, symbol)";
+        strengthMessage.style.color = "orange";
+      } else {
+        strengthMessage.textContent = "Strong password";
+        strengthMessage.style.color = "green";
+      }
+    });
+
     registerForm.addEventListener("submit", e => {
       e.preventDefault();
       registerError.textContent = "";
 
       const name = document.getElementById("fullName").value.trim();
-      const email = document.getElementById("email").value.trim();
+      const email = document.getElementById("email").value.trim().toLowerCase();
       const password = passwordInput.value.trim();
       const confirmPassword = confirmPasswordInput.value.trim();
+      const userType = userTypeInput.value;
 
       if (!name || !email || !password || !confirmPassword) {
         registerError.textContent = "Please fill in all fields.";
@@ -230,9 +299,24 @@
         return;
       }
 
-      alert("Registration successful! Redirecting to login page...");
-      window.location.href = "login.html";
+      const users = JSON.parse(localStorage.getItem("terraUsers") || "[]");
+      const userExists = users.some(u => u.email === email);
+      if (userExists) {
+        registerError.textContent = "This email is already registered.";
+        return;
+      }
+
+      const newUser = { name, email, password, userType };
+      users.push(newUser);
+      localStorage.setItem("terraUsers", JSON.stringify(users));
+
+      alert(`Registration successful as ${userType}! Redirecting to login page...`);
+      window.location.href = "login.html?registered=true";
     });
+
+    function goToLogin() {
+      window.location.href = "login.html";
+    }
   </script>
 </body>
 </html>
