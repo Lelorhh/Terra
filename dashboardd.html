@@ -7,6 +7,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/file-saver"></script>
+  <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" defer></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css">
   <style>
     * {
       box-sizing: border-box;
@@ -17,12 +19,14 @@
       display: flex;
       height: 100vh;
       background: #f4fdf7;
+      transition: background 0.5s ease;
     }
     .sidebar {
       width: 220px;
       background-color: #2e7d32;
       color: white;
       padding: 20px;
+      transition: background-color 0.3s ease;
     }
     .sidebar h2 {
       font-size: 24px;
@@ -34,11 +38,16 @@
       text-decoration: none;
       margin-bottom: 15px;
       cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .sidebar a:hover {
+      transform: translateX(5px);
     }
     .main {
       flex: 1;
       padding: 20px;
       overflow-y: auto;
+      transition: all 0.4s ease-in-out;
     }
     .section-content {
       display: none;
@@ -48,6 +57,7 @@
       margin-bottom: 20px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
       animation: fadeIn 0.8s ease-in-out;
+      transition: all 0.4s;
     }
     .section-content.active {
       display: block;
@@ -79,6 +89,10 @@
       border: none;
       border-radius: 8px;
       cursor: pointer;
+    }
+    table.dataTable-table {
+      width: 100%;
+      margin-top: 20px;
     }
   </style>
 </head>
@@ -117,7 +131,16 @@
 
     <div id="bookings" class="section-content">
       <h3>Bookings</h3>
-      <p>Mock data: 207 bookings this month.</p>
+      <table id="bookingTable">
+        <thead>
+          <tr><th>ID</th><th>Customer</th><th>Destination</th><th>Date</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>Alice</td><td>Eco Lodge</td><td>2025-07-01</td><td>Confirmed</td></tr>
+          <tr><td>2</td><td>Bob</td><td>Forest Retreat</td><td>2025-07-05</td><td>Pending</td></tr>
+          <tr><td>3</td><td>Clara</td><td>River Camp</td><td>2025-07-08</td><td>Cancelled</td></tr>
+        </tbody>
+      </table>
     </div>
 
     <div id="listings" class="section-content">
@@ -273,7 +296,10 @@
       startLiveChart();
       startPieChart();
       startBarChart();
+      new simpleDatatables.DataTable("#bookingTable");
     };
   </script>
 </body>
 </html>
+
+        
