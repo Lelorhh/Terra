@@ -19,9 +19,10 @@
       background: #f4fdf7;
       display: flex;
       height: 100vh;
-      /* center horizontally with padding top */
       justify-content: flex-start;
       padding-top: 134px;
+      color: #000;
+      transition: background 0.5s ease, color 0.5s ease;
     }
     .sidebar {
       width: 220px;
@@ -72,7 +73,7 @@
       border-radius: 30px;
       padding: 30px 40px;
       overflow-y: auto;
-      transition: all 0.4s ease-in-out;
+      transition: all 0.4s ease-in-out, background 0.5s ease;
     }
     .section-content {
       display: none;
@@ -127,6 +128,44 @@
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
+    }
+    /* Settings form styles */
+    #settingsForm fieldset {
+      border: none;
+      margin-bottom: 20px;
+    }
+    #settingsForm legend {
+      font-weight: 600;
+      margin-bottom: 10px;
+      font-size: 1.1em;
+    }
+    #settingsForm label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    #settingsForm input[type="text"],
+    #settingsForm input[type="email"],
+    #settingsForm select {
+      width: 100%;
+      max-width: 400px;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+      margin-bottom: 12px;
+      box-sizing: border-box;
+      transition: border-color 0.3s;
+    }
+    #settingsForm input[type="checkbox"] {
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    #saveMessage {
+      color: green;
+      margin-top: 10px;
+      display: none;
+      font-weight: 600;
     }
   </style>
 </head>
@@ -221,7 +260,43 @@
     <!-- Settings Tab -->
     <section id="settings" class="section-content">
       <h3>Settings</h3>
-      <p>User preferences and configurations.</p>
+      <form id="settingsForm">
+        <fieldset>
+          <legend>User Profile</legend>
+          <label for="userName">Name:</label>
+          <input type="text" id="userName" name="userName" value="Sibulelo Mkhize" />
+          <label for="userEmail">Email:</label>
+          <input type="email" id="userEmail" name="userEmail" value="sibulelo@example.com" />
+        </fieldset>
+
+        <fieldset>
+          <legend>Notifications</legend>
+          <label><input type="checkbox" id="notifyEmail" checked /> Email Notifications</label>
+          <label><input type="checkbox" id="notifySMS" /> SMS Notifications</label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Appearance</legend>
+          <label for="themeSelect">Theme:</label>
+          <select id="themeSelect">
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </fieldset>
+
+        <fieldset>
+          <legend>Language</legend>
+          <select id="languageSelect">
+            <option value="en">English</option>
+            <option value="za">Zulu</option>
+            <option value="fr">French</option>
+            <option value="es">Spanish</option>
+          </select>
+        </fieldset>
+
+        <button type="submit" class="download-btn" style="max-width: 150px;">Save Settings</button>
+        <p id="saveMessage">Settings saved!</p>
+      </form>
     </section>
   </main>
 
@@ -230,13 +305,13 @@
     let liveChart;
 
     function showTab(tabId) {
-      // Remove active class from all links and add to the clicked one
+      // Update sidebar active link
       document.querySelectorAll('.sidebar a').forEach(link => {
         link.classList.remove('active');
       });
       document.querySelector(`.sidebar a[onclick*="${tabId}"]`).classList.add('active');
 
-      // Show the requested section, hide others
+      // Show the requested tab content
       document.querySelectorAll('.section-content').forEach(section => {
         section.classList.remove('active');
       });
@@ -348,17 +423,50 @@
       });
     }
 
-    window.onload = () => {
+    // Handle theme toggling
+    function applyTheme(theme) {
+      if (theme === 'dark') {
+        document.body.style.background = '#121212';
+        document.body.style.color = '#eee';
+        document.querySelector('.main').style.background = '#1e1e1e';
+      } else {
+        document.body.style.background = '#f4fdf7';
+        document.body.style.color = '#000';
+        document.querySelector('.main').style.background = '#fff';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
       startLiveChart();
       startPieChart();
       startBarChart();
 
-      // Initialize datatable after scripts are loaded
+      // Initialize datatable for bookings
       const bookingTable = document.querySelector("#bookingTable");
       if (bookingTable) {
         new simpleDatatables.DataTable(bookingTable);
       }
-    };
+
+      // Settings form logic
+      const form = document.getElementById('settingsForm');
+      const saveMessage = document.getElementById('saveMessage');
+      const themeSelect = document.getElementById('themeSelect');
+
+      applyTheme(themeSelect.value);
+
+      themeSelect.addEventListener('change', (e) => {
+        applyTheme(e.target.value);
+      });
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        // Here you would normally save to backend
+        saveMessage.style.display = 'block';
+        setTimeout(() => {
+          saveMessage.style.display = 'none';
+        }, 3000);
+      });
+    });
   </script>
 </body>
 </html>
