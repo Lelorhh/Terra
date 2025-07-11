@@ -27,16 +27,12 @@
       font-size: 24px;
       margin-bottom: 30px;
     }
-    .sidebar a, .sidebar button.logout-btn {
+    .sidebar a {
       display: block;
       color: white;
       text-decoration: none;
       margin-bottom: 15px;
-      background: none;
-      border: none;
-      font-size: 16px;
       cursor: pointer;
-      text-align: left;
     }
     .main {
       flex: 1;
@@ -44,12 +40,16 @@
       overflow-y: auto;
     }
     .section-content {
+      display: none;
       background: white;
       padding: 20px;
       border-radius: 12px;
       margin-bottom: 20px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
       animation: fadeIn 0.8s ease-in-out;
+    }
+    .section-content.active {
+      display: block;
     }
     @keyframes fadeIn {
       0% { opacity: 0; transform: translateY(20px); }
@@ -63,66 +63,6 @@
       width: 100% !important;
       height: 300px !important;
     }
-    .login {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.6);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-    .login-box {
-      background: white;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      text-align: center;
-    }
-    .login-box input {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      font-size: 16px;
-    }
-    .login-box button {
-      padding: 10px 20px;
-      background: #4caf50;
-      border: none;
-      color: white;
-      font-weight: bold;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      justify-content: center;
-      align-items: center;
-      z-index: 999;
-    }
-    .modal-content {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      width: 300px;
-      text-align: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    }
-    .modal-content button {
-      margin-top: 10px;
-      padding: 8px 16px;
-      background: #4caf50;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
     .filter-container {
       margin-bottom: 20px;
     }
@@ -133,41 +73,22 @@
   </style>
 </head>
 <body>
-  <div class="login" id="loginScreen">
-    <div class="login-box">
-      <h2>Login to TerraBook</h2>
-      <input type="text" id="username" placeholder="Username">
-      <input type="password" id="password" placeholder="Password">
-      <button onclick="login()">Login</button>
-    </div>
-  </div>
-
-  <div class="modal" id="welcomeModal">
-    <div class="modal-content">
-      <h3>Welcome to TerraBook</h3>
-      <p>You're now logged in!</p>
-      <button onclick="closeModal()">Close</button>
-    </div>
-  </div>
-
-  <div class="sidebar" id="sidebar" style="display:none;">
+  <div class="sidebar">
     <h2>TerraBook</h2>
-    <a href="#dashboard">Dashboard</a>
-    <a href="#bookings">Bookings</a>
-    <a href="#listings">Listings</a>
-    <a href="#customers">Customers</a>
-    <a href="#revenue">Revenue</a>
-    <a href="#impact">Impact</a>
-    <a href="#reports">Reports</a>
-    <a href="#settings">Settings</a>
-    <button class="logout-btn" onclick="logout()">Logout</button>
+    <a onclick="showTab('dashboard')">Dashboard</a>
+    <a onclick="showTab('bookings')">Bookings</a>
+    <a onclick="showTab('listings')">Listings</a>
+    <a onclick="showTab('customers')">Customers</a>
+    <a onclick="showTab('revenue')">Revenue</a>
+    <a onclick="showTab('impact')">Impact</a>
+    <a onclick="showTab('reports')">Reports</a>
+    <a onclick="showTab('settings')">Settings</a>
   </div>
 
-  <div class="main" id="mainContent" style="display:none;">
-    <div id="dashboard" class="section-content">
+  <div class="main">
+    <div id="dashboard" class="section-content active">
       <h3>Dashboard</h3>
       <p>Overview of key metrics and trends.</p>
-
       <div class="filter-container">
         <label for="timeRange">Select Time Range:</label>
         <select id="timeRange" onchange="updateChartRange()">
@@ -176,40 +97,57 @@
           <option value="30">Last 30</option>
         </select>
       </div>
-
       <div class="chart-container">
         <canvas id="liveChart"></canvas>
         <canvas id="pieChart"></canvas>
       </div>
     </div>
-    <!-- other sections stay unchanged -->
+
+    <div id="bookings" class="section-content">
+      <h3>Bookings</h3>
+      <p>Mock data: 207 bookings this month.</p>
+    </div>
+
+    <div id="listings" class="section-content">
+      <h3>Listings</h3>
+      <p>Mock data: 36 active listings.</p>
+    </div>
+
+    <div id="customers" class="section-content">
+      <h3>Customers</h3>
+      <p>Mock data: 1,230 customers.</p>
+    </div>
+
+    <div id="revenue" class="section-content">
+      <h3>Revenue</h3>
+      <p>Revenue this month: R56,000.</p>
+    </div>
+
+    <div id="impact" class="section-content">
+      <h3>Impact</h3>
+      <p>Carbon saved: 3,200kg, Jobs created: 28.</p>
+    </div>
+
+    <div id="reports" class="section-content">
+      <h3>Reports</h3>
+      <p>Monthly booking and revenue reports available.</p>
+    </div>
+
+    <div id="settings" class="section-content">
+      <h3>Settings</h3>
+      <p>User preferences and configurations.</p>
+    </div>
   </div>
 
   <script>
     let maxPoints = 10;
     let chart;
 
-    function login() {
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
-      if (username === 'admin' && password === 'admin') {
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('sidebar').style.display = 'block';
-        document.getElementById('mainContent').style.display = 'block';
-        document.getElementById('welcomeModal').style.display = 'flex';
-        startLiveChart();
-        startPieChart();
-      } else {
-        alert('Invalid credentials. Try admin/admin.');
-      }
-    }
-
-    function logout() {
-      location.reload();
-    }
-
-    function closeModal() {
-      document.getElementById('welcomeModal').style.display = 'none';
+    function showTab(tabId) {
+      document.querySelectorAll('.section-content').forEach(section => {
+        section.classList.remove('active');
+      });
+      document.getElementById(tabId).classList.add('active');
     }
 
     function updateChartRange() {
@@ -283,6 +221,11 @@
         }
       });
     }
+
+    window.onload = () => {
+      startLiveChart();
+      startPieChart();
+    };
   </script>
 </body>
 </html>
